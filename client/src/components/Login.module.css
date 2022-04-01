@@ -1,0 +1,33 @@
+@media all and (min-width: 480px) {
+  .login {
+    padding-bottom: 8px;
+    border: 8px solid #212529 ;
+    border-radius: 20px;
+    background-color: #f7f7f7;
+    width: 800px;
+    margin: 100px auto;
+    box-shadow: 0 2px 6px rgba(131, 131, 131, 0.63);
+    text-align: center;
+  }
+
+  .login form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+
+  .login form div {
+   margin-bottom: 20px;
+  }
+
+
+  .login_header {
+    border: 5px solid #212529;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    background-color: #212529;
+    color: white;
+    font-weight: 600;
+  }
+}
