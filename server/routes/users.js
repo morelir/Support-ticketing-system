@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const { UserModel,validUser } = require("../models/userModel");
+const { UserModel, validUser } = require("../models/userModel");
 
 router.get("/", (req, res) => {
   res.json({ msg: "express work " });
 });
 
-router.post("/", async (req, res) => { 
-  let validBody = validUser(req.body)
-  if(validBody.error){
+router.post("/addUser", async (req, res) => {
+  let validBody = validUser(req.body);
+  if (validBody.error) {
     return res.status(400).json(validBody.error.details);
   }
   try {
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
   } catch (err) {
     res
       .status(401)
-      .json({msg: "Email or ID already in system or there another problem" });
+      .json({ msg: "Email or ID already in system or there another problem" });
   }
 });
 

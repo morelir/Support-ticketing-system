@@ -7,16 +7,20 @@ import {
   //Navigate
 } from "react-router-dom";
 import Login from "./components/Login"
+import UserPanel from "./components/UserPanel";
+import { AuthContextProvider } from './store/auth-context';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route exact path="/" element={<Login/>}></Route>
+      <AuthContextProvider>
+        <Routes>
+          <Route exact path="/" element={<Login/>}></Route>
+          <Route exact path="/UserPanel" element={<UserPanel/>}></Route>
 
-
-        
-      </Routes>
+          
+        </Routes>
+      </AuthContextProvider>
     </Router>
   );
 }

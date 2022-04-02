@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -14,12 +14,12 @@ const userSchema = new mongoose.Schema({
 
 exports.UserModel = mongoose.model("users", userSchema);
 
-// exports.genToken = (_userId) => {
-//   let token = jwt.sign({ _id: _userId }, "MONKEYSSECRET", {
-//     expiresIn: "60mins",
-//   });
-//   return token;
-// };
+exports.genToken = (_userId) => {
+  let token = jwt.sign({ _id: _userId }, "MONKEYSSECRET", {
+    expiresIn: "60mins",
+  });
+  return token;
+};
 
 exports.validUser = (_bodyData) => {
   let joiSchema = Joi.object({
