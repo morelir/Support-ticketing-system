@@ -4,14 +4,14 @@ import Button from "react-bootstrap/Button";
 import styles from "./Login.module.css";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
   const authCtx = useContext(AuthContext);
-  const navigate = useNavigate();
+  const history = useHistory();
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -27,19 +27,17 @@ const Login = (props) => {
     })
       .then((response) => {
         console.log(response.data.user);
-        const expirationTime = new Date(
-          new Date().getTime() +  3600 * 1000
-        );
+        const expirationTime = new Date(new Date().getTime() + 2 * 3600 * 1000);
         const objUserAndToken = {
           ...response.data.user,
           token: response.data.token,
         };
-        console.log(objUserAndToken)
+        console.log(objUserAndToken);
         authCtx.login(objUserAndToken, expirationTime.toISOString());
         console.log(authCtx.user);
-        if (response.data.user.role === "regular") navigate("/UserPanel");
-        else if (response.data.user.team === "admin") navigate("/AdminPanel");
-        else navigate("/");
+        if (response.data.user.role === "regular") history.replace("/UserPanel");
+        else if (response.data.user.team === "admin") history.replace("/AdminPanel");
+        else history.replace("/");
       })
       .catch((err) => {
         setErrors(err.response.data.msg);
