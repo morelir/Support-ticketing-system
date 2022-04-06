@@ -1,0 +1,12 @@
+.container {
+  border: 8px solid #212529;
+  border-radius: 20px;
+  background-color: rgba(6, 63, 200, 0.71);
+  width: 800px;
+  margin: 100px auto;
+  box-shadow: 0 2px 6px rgba(131, 131, 131, 0.63);
+  text-align: center;
+  position: relative;
+  
+}
+

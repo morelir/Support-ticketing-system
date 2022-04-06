@@ -22,8 +22,8 @@ const Login = (props) => {
     console.log("event");
     setErrors("");
     Axios.post("/Login", {
-      email: "webappscereceive@gmail.com",
-      pass: "12345",
+      email: email,
+      pass: password,
     })
       .then((response) => {
         console.log(response.data.user);
