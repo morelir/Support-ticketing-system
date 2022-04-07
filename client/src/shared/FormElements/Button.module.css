@@ -57,20 +57,26 @@
   font-size: 0.8rem;
 }
 
+.button--medium {
+  font-size: 1.5rem;
+  width: 200px;
+}
+
+
 .button--big {
   font-size: 1.5rem;
   width: 150px;
 }
 
 .button--color--grey{
-  background-color:#3f4a53
+  background-color:#3f4a53;
 }
 
 .button--color--grey:hover,
 .button--color--grey:active {
   background: white;
   border-color: white;
-  color:#3f4a53
+  color:#3f4a53;
 }
 
 .button--color--grey-modal{

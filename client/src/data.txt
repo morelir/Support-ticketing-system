@@ -9,3 +9,20 @@ const UserPanel = () => {
 };
 
 export default UserPanel;
+
+  # get request
+  // const getUserDetail = useCallback(() => {
+  //   Axios.get("/users/userinfo", {
+  //     headers: { "x-api-key": authCtx.user.token },
+  //   })
+  //     .then((response) => {
+  //       setUser(response.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err.response.data.msg);
+  //     });
+  // });
+
+  // useEffect(() => {
+  //   getUserDetail();
+  // }, []);

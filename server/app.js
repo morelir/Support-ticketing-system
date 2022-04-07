@@ -30,6 +30,6 @@ routesInit(app);
 //מייצרים שרת שמשתמש במשתנה אפ שיש לו את כל היכולות המיוחדות של אקספרס
 const server = http.createServer(app);
 //הגדרנו פורט
-let port = "3001";
+let port = "3002";
 server.listen(port);
 // process.env.PORT ||

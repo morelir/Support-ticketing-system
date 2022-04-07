@@ -4,8 +4,8 @@
   text-align: center;
 }
 
-.subLeft_container button {
-  margin-top: 30%;
+.button {
+  float:right
 }
 
 .modal {

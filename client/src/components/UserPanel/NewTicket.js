@@ -13,19 +13,20 @@ import axios from "axios";
 
 const initialState = {
   title: "",
-  discription: "",
+  description: "",
   urgencyLevel: "",
-  selectedFile:{
+  selectedFile: {
     name: "",
     file: "",
-  }
+  },
 };
 
-const NewTicket = () => {
+const NewTicket = (props) => {
   const authCtx = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [savingForm, setSavingForm] = useState(false);
-  const [{title,discription,urgencyLevel,selectedFile}, setState] = useState(initialState);
+  const [{ title, description, urgencyLevel, selectedFile }, setState] =
+    useState(initialState);
 
   // const [selectedFile, setSelectedFile] = useState({
   //   name: "",
@@ -45,53 +46,67 @@ const NewTicket = () => {
   };
 
   const reset = () => {
-    setState({...initialState})
+    setState({ ...initialState });
     // setSavingForm(false);
   };
 
   const submitNewTicket = async (e) => {
     e.preventDefault();
     setSavingForm(true);
-    await axios.post(
-      "/UserPanel/NewTicket",
-      {
-        title: title,
-        discription: discription,
-        urgencyLevel: urgencyLevel,
-        selectedFile: selectedFile.file,
-      },
-      config
-    );
-    setSavingForm(false);
+    console.log(formData);
+    try {
+      let response = await axios.post(
+        "/UserPanel/NewTicket",
+        {
+          number : Math.floor(Math.random() * Date.now()).toString(),
+          status:"Open",
+          clientID:authCtx.user._id,
+          title: title,
+          description: description,
+          urgencyLevel: urgencyLevel,
+         
+        },
+        config
+      );
+      props.updateTickets(response.data)
+      setSavingForm(false);
+    } catch (err) {
+      console.log(err);
+      setSavingForm(false);
+    }
   };
 
   const handleChange = (e) => {
-    setState((prevState)=>{
+    setState((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
-    })
+    });
   };
 
   const onFileUpload = (e) => {
     const file = e.target.files[0];
+    console.log(e.target.files[0]);
     formData.append("myFile", file, file.name);
     setState((prevState) => {
       return {
         ...prevState,
-        selectedFile:{
-        name: file.name,
-        file: URL.createObjectURL(formData.get("myFile")), //or URL.createObjectURL(e.target.files[0])
-        }
+        selectedFile: {
+          name: file.name,
+          file: URL.createObjectURL(formData.get("myFile")), //or URL.createObjectURL(e.target.files[0])
+        },
       };
     });
   };
 
   return (
     <>
-      <div className={styles.subLeft_container}>
-        <Button onClick={handleOpen} color="grey" size="big">
-          Add new ticket
-        </Button>
-      </div>
+      <Button
+        className={styles.button}
+        onClick={handleOpen}
+        color="grey"
+        size="medium"
+      >
+        Add New Ticket
+      </Button>
 
       <Modal
         show={show}
@@ -132,8 +147,8 @@ const NewTicket = () => {
                   style={{ height: "10em" }}
                   as="textarea"
                   type="text"
-                  name="discription"
-                  value={discription}
+                  name="description"
+                  value={description}
                   onChange={handleChange}
                 />
               </Form.Group>
