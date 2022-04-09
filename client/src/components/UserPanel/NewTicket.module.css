@@ -4,7 +4,8 @@
   text-align: center;
 }
 
-.button {
+.btnNewTicket {
+  background-color: #509ad6;
   float:right
 }
 

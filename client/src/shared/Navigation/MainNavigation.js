@@ -9,14 +9,17 @@ const MainNavigation = (props) => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
 
+  
   return (
-    <React.Fragment>
+    <React.Fragment>    
       <MainHeader>
         {isLoggedIn ? (
           <>
             <h1 className="main-navigation__title">
               {authCtx.user.role === "regular" && (
+                <>
                 <Link to="/UserPanel"> Support Ticketing System</Link>
+                </>
               )}
               {authCtx.user.role === "admin" && (
                 <Link to="/AdminPanel"> Support Ticketing System</Link>

@@ -7,20 +7,22 @@ import Table from "react-bootstrap/Table";
 import Button from "../shared/FormElements/Button";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
+import Image from "react-bootstrap/Image";
 import { displayDate, getTimeDuration } from "../utils/functions";
 
 const UserPanel = () => {
   const authCtx = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
-
+  const config = {
+    headers: { "x-api-key": authCtx.user.token },
+  };
   const evenPos = (pos) => pos % 2 == 0;
 
   const getData = async () => {
     try {
-      // let response = await Axios.get("UserPanel/tickets");
-      // setTickets(defaultFilter(response.data, authCtx.user.team));
-
+      let response = await Axios.get("UserPanel/tickets", config);
+      setTickets(response.data, authCtx.user.team);
       setIsLoading(false);
       // setIsOpen(true);
     } catch (err) {
@@ -28,16 +30,19 @@ const UserPanel = () => {
     }
   };
 
-  useEffect(async () => {
-    await getData();
+  useEffect(() => {
+    getData();
   }, []);
 
   const updateTickets = (tickets) => {
+    setIsLoading(true);
     setTickets(tickets);
+    setIsLoading(false);
   };
 
   return (
     <main>
+      
       <div className={`${styles["container-max-width"]} container-xl `}>
         <div className={styles["table-responsive"]}>
           <div className={styles["table-wrapper"]}>
@@ -59,14 +64,12 @@ const UserPanel = () => {
                     />
                   </a> */}
 
-                    <NewTicket  updateTickets={updateTickets} />
+                    <NewTicket updateTickets={updateTickets} />
                   </div>
                 )}
               </div>
             </div>
-            <table
-              className="table"
-            >
+            <table className="table">
               {/* <FaultsFilter
               faults={allFaults}
               users={users}
@@ -122,7 +125,8 @@ const UserPanel = () => {
                             >
                               <strong>{ticket.urgencyLevel}</strong>
                             </td>
-                            <td>{getTimeDuration(ticket.date_created)}</td>
+                            <td>{getTimeDuration(ticket.open_date)}</td>
+                            <td></td>
                             {/* <td>
                             <EditFaultModel
                               fault={fault}

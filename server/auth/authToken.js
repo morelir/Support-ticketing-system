@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 exports.authToken = (req,res,next) =>{
     //לבדוק אם בכלל נשלח טוקן
+    console.log("token check")
     let token = req.header("x-api-key")//נהוג ככה לקרוא למפתח
     if(!token){
         return res.status(401).json({msg:"you must send token"});
@@ -13,7 +14,7 @@ exports.authToken = (req,res,next) =>{
         //אם הכל בסדר נעבור לפנוקציה הבאה
         next();
     }
-    catch(err){
+    catch(err){  
         res.json({msg:"token invalid or expired"});
     }
 

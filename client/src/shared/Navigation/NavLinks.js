@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Link, useHistory } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
-import Axios from "axios";
 import { capitalizeFirstLetter } from "../../utils/functions";
 
 import "./NavLinks.css";
@@ -13,7 +12,6 @@ const NavLinks = (props) => {
 
   const LogoutHandler = () => {
     authCtx.logout();
-    // history.replace("/login");
   };
 
   return (

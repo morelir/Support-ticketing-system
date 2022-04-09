@@ -8,7 +8,6 @@ const ticketSchema = new mongoose.Schema({
   title: String,
   description: String,
   urgencyLevel: String,
-  file: Object,
   open_date: {
     type: Date,
     default: Date.now,

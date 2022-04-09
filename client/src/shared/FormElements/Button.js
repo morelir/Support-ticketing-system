@@ -35,7 +35,9 @@ const Button = (props) => {
         props.size && styles[`button--${props.size}`]
       } ${props.inverse && styles["button--inverse"]} ${
         props.danger && styles["button--danger"]
-      } ${props.color && styles[`button--color--${props.color}`]} ${props.className}`}
+      } ${props.color && styles[`button--color--${props.color}`]} ${
+        props.colorHover && styles[`button--color--hover--${props.colorHover}`]
+      } ${props.className}`}
       type={props.type}
       variant={props.variant}
       onClick={props.onClick}

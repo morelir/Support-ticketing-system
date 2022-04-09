@@ -58,8 +58,8 @@
 }
 
 .button--medium {
-  font-size: 1.5rem;
-  width: 200px;
+  font-size: 1.3rem;
+  width: 160px;
 }
 
 
@@ -74,6 +74,13 @@
 
 .button--color--grey:hover,
 .button--color--grey:active {
+  background: white;
+  border-color: white;
+  color:#3f4a53;
+}
+
+.button--color--hover--white:hover,
+.button--color--hover--white:hover:active{
   background: white;
   border-color: white;
   color:#3f4a53;

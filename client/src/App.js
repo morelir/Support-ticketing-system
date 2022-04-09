@@ -4,8 +4,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  // Link,
-  // Navigate,
+  Redirect,
 } from "react-router-dom";
 import Login from "./components/Login";
 import UserPanel from "./components/UserPanel";
@@ -18,8 +17,8 @@ function App() {
   const authCtx = useContext(AuthContext);
 
   return (
-    <Router>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <Router>
         <MainNavigation />
         <div className="App">
           <Switch>
@@ -30,10 +29,13 @@ function App() {
               path="/UserPanel"
               component={UserPanel}
             />
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
           </Switch>
         </div>
-      </AuthContextProvider>
-    </Router>
+      </Router>
+    </AuthContextProvider>
   );
 }
 

@@ -9,12 +9,13 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
 import Message from "../../shared/FormElements/Message";
+import { MdOutlineAddCircle } from "react-icons/md";
 import axios from "axios";
 
 const initialState = {
   title: "",
   description: "",
-  urgencyLevel: "",
+  urgencyLevel: "Low",
   selectedFile: {
     name: "",
     file: "",
@@ -53,22 +54,31 @@ const NewTicket = (props) => {
   const submitNewTicket = async (e) => {
     e.preventDefault();
     setSavingForm(true);
-    console.log(formData);
+    console.log(config);
+    const ticketID = Math.floor(Math.random() * Date.now()).toString();
+    let data = new FormData();
+
+    data.append("file", selectedFile.file, `${ticketID}-${selectedFile.name}`);
+    console.log(data);
     try {
-      let response = await axios.post(
+      let response = await axios.post("/UserPanel/AddFile", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      response = await axios.post(
         "/UserPanel/NewTicket",
         {
-          number : Math.floor(Math.random() * Date.now()).toString(),
-          status:"Open",
-          clientID:authCtx.user._id,
+          number: ticketID,
+          status: "Open",
+          clientID: authCtx.user._id,
           title: title,
           description: description,
           urgencyLevel: urgencyLevel,
-         
         },
         config
       );
-      props.updateTickets(response.data)
+      props.updateTickets(response.data);
       setSavingForm(false);
     } catch (err) {
       console.log(err);
@@ -84,15 +94,13 @@ const NewTicket = (props) => {
 
   const onFileUpload = (e) => {
     const file = e.target.files[0];
-    console.log(e.target.files[0]);
-    formData.append("myFile", file, file.name);
     setState((prevState) => {
       return {
         ...prevState,
         selectedFile: {
           name: file.name,
-          file: URL.createObjectURL(formData.get("myFile")), //or URL.createObjectURL(e.target.files[0])
-        },
+          file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
+        }, //URL.createObjectURL(formData.get("myFile"))
       };
     });
   };
@@ -100,12 +108,12 @@ const NewTicket = (props) => {
   return (
     <>
       <Button
-        className={styles.button}
+        className={styles.btnNewTicket}
         onClick={handleOpen}
-        color="grey"
+        colorHover="white"
         size="medium"
       >
-        Add New Ticket
+        New Ticket <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
       </Button>
 
       <Modal
@@ -187,7 +195,7 @@ const NewTicket = (props) => {
             <Row className="mb-3">
               {selectedFile.file !== "" && (
                 <>
-                  <Image src={selectedFile.file} />
+                  <Image src={URL.createObjectURL(selectedFile.file)} />
                   <Message style={{ wordWrap: "break-word" }}>
                     {" "}
                     Uploaded the file successfully : {selectedFile.name}{" "}
