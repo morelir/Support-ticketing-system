@@ -32,22 +32,7 @@ router.post("/AddFile", upload.single("file"), async (req, res) => {
   res.json();
 });
 
-router.get("/tickets", authToken, async (req, res) => {
-  try {
-    let tickets = await TicketModel.find({
-      clientID: "624763d0eb906509bd283df7",
-    }).lean();
-    console.log(tickets)
-    let data = await mergeTicketsWithImage(tickets);
-    console.log(data);
-    res.json(data);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
 router.post("/NewTicket", authToken, async (req, res) => {
-  console.log(req.body);
   let validBody = validNewTicket(req.body);
   if (validBody.error) {
     console.log("error");
@@ -59,15 +44,29 @@ router.post("/NewTicket", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.body.clientID,
     }).lean();
-    let data = mergeTicketsWithImage(tickets);
+    let data = await mergeTicketsWithImage(tickets);
     res.json(data);
   } catch (err) {
-    console.log(err);
     res.status(401).json({ msg: "Error" });
   }
 });
 
+router.get("/tickets", authToken, async (req, res) => {
+  try {
+    let tickets = await TicketModel.find({
+      clientID: req.tokenData._id,
+    }).lean();
+    console.log(tickets);
+    let data = await mergeTicketsWithImage(tickets);
+    console.log(data);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 const mergeTicketsWithImage = async (tickets) => {
+  // mergeTicketsWithImage and sorted by status
   try {
     let data = await Promise.all(
       tickets.map(async (ticket) => {
@@ -75,17 +74,23 @@ const mergeTicketsWithImage = async (tickets) => {
           { filePath: { $regex: ticket.number, $options: "i" } },
           "-_id filePath"
         ).lean();
-
         return {
           ...ticket,
           filePath: image.filePath,
         };
       })
     );
+    data.sort((ticket) => {
+      if (ticket.status === "Open") return -1;
+      else if (ticket.status === "Working on it") return 0;
+      else return 1;
+    });
     return data;
   } catch (err) {
     console.log(err);
   }
 };
+
+
 
 module.exports = router;

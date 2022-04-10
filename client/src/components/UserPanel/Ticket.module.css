@@ -1,0 +1,45 @@
+.ticket-even-pos {
+  --bs-table-accent-bg: none;
+  background-color: #f7f7f7;
+  /* background-color:rgba(0, 0, 0, .05); */
+}
+
+.ticket-even-pos:active,
+.ticket-even-pos:hover {
+  --bs-table-accent-bg: none;
+  background-color: #ddd;
+  cursor: pointer;
+  /* background-color:rgba(0, 0, 0, .05); */
+}
+
+.ticket-odd-pos {
+  --bs-table-accent-bg: none;
+  background-color: rgb(255, 255, 255);
+}
+
+.ticket-odd-pos:active,
+.ticket-odd-pos:hover {
+  --bs-table-accent-bg: none;
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+td.urgencyLevel-Low {
+  color: #00aa2b;
+}
+td.urgencyLevel-Medium {
+  color: #0269ca;
+}
+td.urgencyLevel-High {
+  color: #cc2b03;
+}
+
+.ticket-description {
+  text-align: left;
+  content: "sdsd";
+  padding-left: 5px;
+}
+.ticket-description::before {
+  content: "";
+  margin-left: 130px;
+}

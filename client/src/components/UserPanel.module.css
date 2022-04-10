@@ -38,7 +38,7 @@
   border-radius: 3px;
   min-width: 1000px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  border-radius: 15px;
+  border-radius: 33px;
 }
 
 .table-title {
@@ -50,8 +50,8 @@
   min-width: 100%;
   margin: -20px -25px 10px;
   border-radius: 3px 3px 0 0;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
 }
 
 .table-title h2 {
@@ -143,15 +143,7 @@ table.table td.done_status {
   color: rgb(6, 175, 0);
   min-width: 100px;
 } */
-table.table td.urgencyLevel-Low {
-  color: #00aa2b;
-}
-table.table td.urgencyLevel-Normal {
-  color: #0269ca;
-}
-table.table td.urgencyLevel-High {
-  color: #cc2b03;
-}
+
 
 table.table td a:hover {
   color: #2196f3;
@@ -428,26 +420,6 @@ table.table .avatar {
   width: 80.33333333%;
 }
 
-.ticket-description {
-  text-align: left;
-  content: "sdsd";
-  padding-left: 5px;
-}
-.ticket-description::before {
-  content: "";
-  margin-left: 8px;
-}
-
-.ticket-even-pos {
-  --bs-table-accent-bg: none;
-  background-color: #f7f7f7;
-  /* background-color:rgba(0, 0, 0, .05); */
-}
-
-.ticket-odd-pos {
-  --bs-table-accent-bg: none;
-  background-color: rgb(255, 255, 255);
-}
 
 .container-max-width {
   max-width: 2500px;

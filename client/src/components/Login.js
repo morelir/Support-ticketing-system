@@ -27,7 +27,7 @@ const Login = (props) => {
     })
       .then((response) => {
         console.log(response.data.user);
-        const expirationTime = new Date(new Date().getTime() + 2 * 3600 * 1000);
+        const expirationTime = new Date(new Date().getTime() + 3600 * 1000);
         const objUserAndToken = {
           ...response.data.user,
           token: response.data.token,

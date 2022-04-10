@@ -8,7 +8,7 @@ import Button from "../shared/FormElements/Button";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
-import { displayDate, getTimeDuration } from "../utils/functions";
+import Ticket from "./UserPanel/Ticket";
 
 const UserPanel = () => {
   const authCtx = useContext(AuthContext);
@@ -17,16 +17,16 @@ const UserPanel = () => {
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
-  const evenPos = (pos) => pos % 2 == 0;
 
   const getData = async () => {
     try {
       let response = await Axios.get("UserPanel/tickets", config);
-      setTickets(response.data, authCtx.user.team);
+      setTickets(response.data);
       setIsLoading(false);
       // setIsOpen(true);
     } catch (err) {
-      console.log(err);
+      console.log("err")
+      console.log(err.response);
     }
   };
 
@@ -42,7 +42,6 @@ const UserPanel = () => {
 
   return (
     <main>
-      
       <div className={`${styles["container-max-width"]} container-xl `}>
         <div className={styles["table-responsive"]}>
           <div className={styles["table-wrapper"]}>
@@ -69,7 +68,7 @@ const UserPanel = () => {
                 )}
               </div>
             </div>
-            <table className="table">
+            <table className={`table ${styles.table}`}>
               {/* <FaultsFilter
               faults={allFaults}
               users={users}
@@ -99,126 +98,7 @@ const UserPanel = () => {
                     </tr>
                   ) : (
                     tickets.map((ticket, pos) => {
-                      return (
-                        <React.Fragment key={ticket.number}>
-                          <tr
-                            className={
-                              evenPos(pos)
-                                ? styles["ticket-even-pos"]
-                                : styles["ticket-odd-pos"]
-                            }
-                            // id={evenPos(pos) ? "ticket-even-pos" : "ticket-odd-pos"}
-                          >
-                            <td>{ticket.number}</td>
-
-                            <td>
-                              <strong>{ticket.status} </strong>
-                            </td>
-
-                            <td>{displayDate(ticket.open_date)}</td>
-                            <td>{displayDate(ticket.close_date)}</td>
-
-                            <td
-                              className={
-                                styles[`urgencyLevel-${ticket.urgencyLevel}`]
-                              }
-                            >
-                              <strong>{ticket.urgencyLevel}</strong>
-                            </td>
-                            <td>{getTimeDuration(ticket.open_date)}</td>
-                            <td></td>
-                            {/* <td>
-                            <EditFaultModel
-                              fault={fault}
-                              teams={teams.filter(
-                                (team) =>
-                                  team.name === "Technical service" ||
-                                  team.name === "Customer service"
-                              )}
-                              users={users}
-                              clients={clients}
-                              updateFaults={updateFaults}
-                            />
-                            {authCtx.user.team === "Customer service" ? (
-                              <>
-                                <ModalDialog
-                                  type="fault"
-                                  _id={fault._id}
-                                  authCtx={authCtx}
-                                  Activity={faultActivity}
-                                  native="/faultManagement/closeFault"
-                                  update={updateFaults}
-                                  className="close"
-                                  btn_name="Close"
-                                  btn_disabled={fault.status !== "Done"}
-                                  icon="lock"
-                                  icon_font="20px"
-                                  href="#closeModal"
-                                  header="Close Fault"
-                                >
-                                  <Form.Group>
-                                    <Form.Label>
-                                      <strong>
-                                        Are you sure you want to close the fault
-                                        ?
-                                      </strong>
-                                    </Form.Label>
-                                  </Form.Group>
-                                </ModalDialog>
-                              </>
-                            ) : (
-                              <>
-                                <NewRequestModal
-                                  products={products}
-                                  number={fault.number}
-                                  updateFaults={updateFaults}
-                                  request={fault.request}
-                                  urgencyLevel={fault.urgencyLevel}
-                                  team="Stock"
-                                />
-                                <ModalDialog
-                                  type="fault"
-                                  _id={fault._id}
-                                  authCtx={authCtx}
-                                  Activity={faultActivity}
-                                  native="/faultManagement/doneFault"
-                                  update={updateFaults}
-                                  className="done"
-                                  btn_name="Done"
-                                  btn_disabled={fault.request}
-                                  icon="check_circle_outline"
-                                  icon_font="21"
-                                  href="#doneModal"
-                                  header="Done Fault"
-                                >
-                                  <Form.Group>
-                                    <Form.Label>
-                                      <strong>
-                                        Are you sure the fault has been done ?
-                                      </strong>
-                                    </Form.Label>
-                                  </Form.Group>
-                                </ModalDialog>
-                              </>
-                            )}
-                          </td> */}
-                          </tr>
-                          <tr
-                            className={
-                              evenPos(pos)
-                                ? styles["ticket-even-pos"]
-                                : styles["ticket-odd-pos"]
-                            }
-                          >
-                            <td
-                              colSpan="9"
-                              className={styles["ticket-description"]}
-                            >
-                              <span>{ticket.description}</span>
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      );
+                      return <Ticket ticket={ticket} pos={pos} key={ticket._id} />;
                     })
                   )
                 ) : (

@@ -29,11 +29,6 @@ const NewTicket = (props) => {
   const [{ title, description, urgencyLevel, selectedFile }, setState] =
     useState(initialState);
 
-  // const [selectedFile, setSelectedFile] = useState({
-  //   name: "",
-  //   file: "",
-  // });
-  let formData = new FormData();
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
@@ -57,7 +52,6 @@ const NewTicket = (props) => {
     console.log(config);
     const ticketID = Math.floor(Math.random() * Date.now()).toString();
     let data = new FormData();
-
     data.append("file", selectedFile.file, `${ticketID}-${selectedFile.name}`);
     console.log(data);
     try {
@@ -111,9 +105,9 @@ const NewTicket = (props) => {
         className={styles.btnNewTicket}
         onClick={handleOpen}
         colorHover="white"
-        size="medium"
+        style={{fontSize:"1.2rem"}}
       >
-        New Ticket <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
+        <strong >New Ticket</strong> <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
       </Button>
 
       <Modal
