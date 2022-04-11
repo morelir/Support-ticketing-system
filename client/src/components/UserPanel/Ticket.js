@@ -32,7 +32,7 @@ const Ticket = (props) => {
         </td>
 
         <td>{displayDate(props.ticket.open_date)}</td>
-        <td>{displayDate(props.ticket.close_date)}</td>
+        
 
         <td className={styles[`urgencyLevel-${props.ticket.urgencyLevel}`]}>
           <strong>{props.ticket.urgencyLevel}</strong>

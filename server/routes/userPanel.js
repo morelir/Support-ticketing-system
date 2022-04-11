@@ -35,7 +35,6 @@ router.post("/AddFile", upload.single("file"), async (req, res) => {
 router.post("/NewTicket", authToken, async (req, res) => {
   let validBody = validNewTicket(req.body);
   if (validBody.error) {
-    console.log("error");
     return res.status(400).json(validBody.error.details);
   }
   try {
@@ -56,9 +55,7 @@ router.get("/tickets", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.tokenData._id,
     }).lean();
-    console.log(tickets);
     let data = await mergeTicketsWithImage(tickets);
-    console.log(data);
     res.json(data);
   } catch (err) {
     console.log(err);

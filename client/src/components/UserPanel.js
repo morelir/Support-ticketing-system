@@ -82,7 +82,6 @@ const UserPanel = () => {
                   <th>No.</th>
                   <th>Status</th>
                   <th>Open Date</th>
-                  <th>Close Date</th>
                   <th>Urgency Level</th>
                   <th>Handling Duration</th>
                   <th>Actions</th>
