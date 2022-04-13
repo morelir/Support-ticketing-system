@@ -72,7 +72,7 @@ const NewTicket = (props) => {
         },
         config
       );
-      props.updateTickets(response.data);
+      props.updateTickets(response.data.tickets,response.data.low,response.data.medium,response.data.high);
       setSavingForm(false);
     } catch (err) {
       console.log(err);

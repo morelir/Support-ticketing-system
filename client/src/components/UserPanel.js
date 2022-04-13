@@ -2,18 +2,16 @@ import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
 import styles from "./UserPanel.module.css";
-import Row from "react-bootstrap/Row";
-import Table from "react-bootstrap/Table";
-import Button from "../shared/FormElements/Button";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
-import Image from "react-bootstrap/Image";
 import Ticket from "./UserPanel/Ticket";
+import Dashboard from "./UserPanel/Dashboard";
 
 const UserPanel = () => {
   const authCtx = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
+  const [urgency,setUrgency]=useState({})
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
@@ -21,11 +19,12 @@ const UserPanel = () => {
   const getData = async () => {
     try {
       let response = await Axios.get("UserPanel/tickets", config);
-      setTickets(response.data);
+      setTickets(response.data.tickets);
+      setUrgency({low:response.data.low,medium:response.data.medium,high:response.data.high})
       setIsLoading(false);
       // setIsOpen(true);
     } catch (err) {
-      console.log("err")
+      console.log("err");
       console.log(err.response);
     }
   };
@@ -34,15 +33,23 @@ const UserPanel = () => {
     getData();
   }, []);
 
-  const updateTickets = (tickets) => {
+  const updateTickets = (tickets,low,medium,high) => {
     setIsLoading(true);
     setTickets(tickets);
+    setUrgency({low:low,medium:medium,high:high})
     setIsLoading(false);
   };
 
   return (
     <main>
       <div className={`${styles["container-max-width"]} container-xl `}>
+        {!isLoading && (
+          <Dashboard
+            low={urgency.low}
+            medium={urgency.medium}
+            high={urgency.high}
+          />
+        )}
         <div className={styles["table-responsive"]}>
           <div className={styles["table-wrapper"]}>
             <div className={styles["table-title"]}>
@@ -97,7 +104,9 @@ const UserPanel = () => {
                     </tr>
                   ) : (
                     tickets.map((ticket, pos) => {
-                      return <Ticket ticket={ticket} pos={pos} key={ticket._id} />;
+                      return (
+                        <Ticket ticket={ticket} pos={pos} key={ticket._id} />
+                      );
                     })
                   )
                 ) : (

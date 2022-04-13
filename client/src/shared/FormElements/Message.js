@@ -3,7 +3,9 @@ import styles from "./Message.module.css";
 
 // this.props.location.state.detail.user
 const Message = (props) => {
-  
+  if (props.children==="") {
+    return ""
+  }
 
   if (props.error) {
     return (

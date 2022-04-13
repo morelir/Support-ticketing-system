@@ -1,5 +1,5 @@
 import "./App.css";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,24 +8,22 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login";
 import UserPanel from "./components/UserPanel";
-import { AuthContextProvider } from "./store/auth-context";
 import AuthContext from "./store/auth-context";
 import ProtectedRoute from "./routes/protectedRoute";
 import MainNavigation from "./shared/Navigation/MainNavigation";
 
 function App() {
   const authCtx = useContext(AuthContext);
-
   return (
-    <AuthContextProvider>
-      <Router>
-        <MainNavigation />
+    <Router>
+      <MainNavigation />
+      <main>
         <div className="App">
           <Switch>
-            <Route exact path="/" component={Login}></Route>
-            {/* <Route exact path="/UserPanel" component={UserPanel}></Route> */}
+            <Route exact path="/"  component={Login}></Route> 
+            {/* <Route exact path="/UserPanel"  component={()=>authCtx.isLoggedIn && authCtx.user.role? <UserPanel/>: <Redirect to="/" />}></Route>  */}
             <ProtectedRoute
-              condition={true}
+              condition={authCtx.isLoggedIn && authCtx.user.role === "regular"}
               path="/UserPanel"
               component={UserPanel}
             />
@@ -34,8 +32,8 @@ function App() {
             </Route>
           </Switch>
         </div>
-      </Router>
-    </AuthContextProvider>
+      </main>
+    </Router>
   );
 }
 

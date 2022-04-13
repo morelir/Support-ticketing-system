@@ -1,5 +1,7 @@
 
-.header{
+
+
+.header {
   padding: 60px;
   text-align: center;
   background: #1abc9c;
@@ -143,7 +145,6 @@ table.table td.done_status {
   color: rgb(6, 175, 0);
   min-width: 100px;
 } */
-
 
 table.table td a:hover {
   color: #2196f3;
@@ -420,13 +421,10 @@ table.table .avatar {
   width: 80.33333333%;
 }
 
-
 .container-max-width {
   max-width: 2500px;
   min-width: 1519px;
 }
-
-
 
 /* .container {
   border: 8px solid #212529;
@@ -439,4 +437,3 @@ table.table .avatar {
   position: relative;
   
 } */
-

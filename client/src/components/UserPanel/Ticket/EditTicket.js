@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
 import Message from "../../../shared/FormElements/Message";
+import { displayDate, getTimeDuration } from "../../../utils/functions";
 import axios from "axios";
 
 const EditTicket = (props) => {
@@ -18,6 +19,8 @@ const EditTicket = (props) => {
     title: props.ticket.title,
     description: props.ticket.description,
     urgencyLevel: props.ticket.urgencyLevel,
+    open_date: props.ticket.open_date,
+    close_date: props.ticket.close_date,
     selectedFile: {
       name: "",
       file: props.ticket.filePath,
@@ -33,6 +36,8 @@ const EditTicket = (props) => {
       title,
       description,
       urgencyLevel,
+      open_date,
+      close_date,
       selectedFile,
       fileUploaded,
     },
@@ -45,13 +50,14 @@ const EditTicket = (props) => {
 
   const reset = () => {
     setState({ ...initialState });
-    // setSavingForm(false);
   };
+
   const submitNewTicket = async (e) => {
     e.preventDefault();
   };
 
   const handleChange = (e) => {
+    authCtx.login()
     setState((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
@@ -120,6 +126,29 @@ const EditTicket = (props) => {
                   <option value={"Done"}>Done</option>
                 </>
               </Form.Control>
+            </Form.Group>
+          </Row>
+          <Row className="mb-3" style={{ marginTop: "15px" }}>
+            <Form.Group as={Col}>
+              <Form.Label>
+                <strong>Open Date</strong>
+              </Form.Label>
+              <Form.Control value={displayDate(open_date)} disabled />
+            </Form.Group>
+
+            <Form.Group as={Col}>
+              <Form.Label>
+                <strong>Close Date</strong>
+              </Form.Label>
+
+              <Form.Control
+                value={
+                  displayDate(open_date) > displayDate(close_date)
+                    ? ""
+                    : displayDate(close_date)
+                }
+                disabled
+              />
             </Form.Group>
           </Row>
           <Row className="mb-3" style={{ marginTop: "15px" }}>
@@ -242,7 +271,6 @@ const EditTicket = (props) => {
               )}
             </>
           )}
-          
         </Modal.Footer>
       </Form>
     </Modal>

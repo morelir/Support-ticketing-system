@@ -41,5 +41,5 @@ td.urgencyLevel-High {
 }
 .ticket-description::before {
   content: "";
-  margin-left: 130px;
+  margin-left: 20px;
 }

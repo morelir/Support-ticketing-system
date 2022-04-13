@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NavLink, Link, useHistory } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink, Link} from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import { capitalizeFirstLetter } from "../../utils/functions";
 
@@ -8,7 +8,7 @@ import "./NavLinks.css";
 const NavLinks = (props) => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
-  const history = useHistory();
+  
 
   const LogoutHandler = () => {
     authCtx.logout();

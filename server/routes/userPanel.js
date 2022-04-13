@@ -43,8 +43,8 @@ router.post("/NewTicket", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.body.clientID,
     }).lean();
-    let data = await mergeTicketsWithImage(tickets);
-    res.json(data);
+    let [data,low,medium,high] = await mergeTicketsWithImage(tickets);
+    res.json({tickets:data,low:low,medium:medium,high:high});
   } catch (err) {
     res.status(401).json({ msg: "Error" });
   }
@@ -55,8 +55,8 @@ router.get("/tickets", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.tokenData._id,
     }).lean();
-    let data = await mergeTicketsWithImage(tickets);
-    res.json(data);
+    let [data,low,medium,high] = await mergeTicketsWithImage(tickets);
+    res.json({tickets:data,low:low,medium:medium,high:high});
   } catch (err) {
     console.log(err);
   }
@@ -64,6 +64,7 @@ router.get("/tickets", authToken, async (req, res) => {
 
 const mergeTicketsWithImage = async (tickets) => {
   // mergeTicketsWithImage and sorted by status
+  let [low, medium, high]=[0,0,0];
   try {
     let data = await Promise.all(
       tickets.map(async (ticket) => {
@@ -71,6 +72,9 @@ const mergeTicketsWithImage = async (tickets) => {
           { filePath: { $regex: ticket.number, $options: "i" } },
           "-_id filePath"
         ).lean();
+        if (ticket.urgencyLevel === "Low") low++;
+        else if (ticket.urgencyLevel === "Medium") medium++;
+        else high++;
         return {
           ...ticket,
           filePath: image.filePath,
@@ -82,12 +86,10 @@ const mergeTicketsWithImage = async (tickets) => {
       else if (ticket.status === "Working on it") return 0;
       else return 1;
     });
-    return data;
+    return [data,low,medium,high];
   } catch (err) {
     console.log(err);
   }
 };
-
-
 
 module.exports = router;

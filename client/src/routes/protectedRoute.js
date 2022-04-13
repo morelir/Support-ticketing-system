@@ -1,3 +1,4 @@
+import { MdHistoryToggleOff } from "react-icons/md";
 import {
   Route,
   Redirect,
@@ -6,7 +7,7 @@ import {
 const ProtectedRoute = (props) => {
   if (props.condition) {
     return <Route exact path={props.path} component={props.component}></Route>;
-  } else {
+  }else{
     return <Redirect to="/" />;
   }
 };
