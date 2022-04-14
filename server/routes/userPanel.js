@@ -6,6 +6,7 @@ const path = require("path");
 const { authToken } = require("../auth/authToken");
 const { ImageModel } = require("../models/imageModal");
 const { TicketModel, validNewTicket } = require("../models/ticketModel");
+const {organizeTickets} = require("../utils/functions")
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -43,8 +44,8 @@ router.post("/NewTicket", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.body.clientID,
     }).lean();
-    let [data,low,medium,high] = await mergeTicketsWithImage(tickets);
-    res.json({tickets:data,low:low,medium:medium,high:high});
+    let [data, low, medium, high] = await organizeTickets(tickets);
+    res.json({ tickets: data, low: low, medium: medium, high: high });
   } catch (err) {
     res.status(401).json({ msg: "Error" });
   }
@@ -55,41 +56,11 @@ router.get("/tickets", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.tokenData._id,
     }).lean();
-    let [data,low,medium,high] = await mergeTicketsWithImage(tickets);
-    res.json({tickets:data,low:low,medium:medium,high:high});
+    let [data, low, medium, high] = await organizeTickets(tickets);
+    res.json({ tickets: data, low: low, medium: medium, high: high });
   } catch (err) {
     console.log(err);
   }
 });
-
-const mergeTicketsWithImage = async (tickets) => {
-  // mergeTicketsWithImage and sorted by status
-  let [low, medium, high]=[0,0,0];
-  try {
-    let data = await Promise.all(
-      tickets.map(async (ticket) => {
-        let image = await ImageModel.findOne(
-          { filePath: { $regex: ticket.number, $options: "i" } },
-          "-_id filePath"
-        ).lean();
-        if (ticket.urgencyLevel === "Low") low++;
-        else if (ticket.urgencyLevel === "Medium") medium++;
-        else high++;
-        return {
-          ...ticket,
-          filePath: image.filePath,
-        };
-      })
-    );
-    data.sort((ticket) => {
-      if (ticket.status === "Open") return -1;
-      else if (ticket.status === "Working on it") return 0;
-      else return 1;
-    });
-    return [data,low,medium,high];
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 module.exports = router;

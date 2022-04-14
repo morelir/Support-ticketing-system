@@ -1,43 +1,26 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
-import styles from "./UserPanel.module.css";
+import styles from "./AdminPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
-import { FaLessThanEqual } from "react-icons/fa";
+import User from "./AdminPanel/User";
 
-const UserPanel = (props) => {
+const AdminPanel = () => {
   const authCtx = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [tickets, setTickets] = useState([]);
-  const [urgency, setUrgency] = useState({});
+  const [users, setUsers] = useState([]);
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
 
   const getData = async () => {
     try {
-      let response;
-      if (props.user) {
-        response = await Axios.get("AdminPanel/clientTickets", {
-          params: {
-            id: props.user._id,
-          },
-          headers: { "x-api-key": authCtx.user.token },
-        });
-      } else {
-        response = await Axios.get("UserPanel/tickets", config);
-      }
-      setTickets(response.data.tickets);
-      setUrgency({
-        low: response.data.low,
-        medium: response.data.medium,
-        high: response.data.high,
-      });
+      let response = await Axios.get("AdminPanel/users", config);
+      setUsers(response.data.users);
       setIsLoading(false);
-      // setIsOpen(true);
     } catch (err) {
       console.log("err");
       console.log(err.response);
@@ -48,30 +31,22 @@ const UserPanel = (props) => {
     getData();
   }, []);
 
-  const updateTickets = (tickets, low, medium, high) => {
+  const updateUsers = (users) => {
     setIsLoading(true);
-    setTickets(tickets);
-    setUrgency({ low: low, medium: medium, high: high });
+    setUsers(users);
     setIsLoading(false);
   };
 
   return (
     <main>
       <div className={`${styles["container-max-width"]} container-xl `}>
-        {!isLoading && (
-          <Dashboard
-            low={urgency.low}
-            medium={urgency.medium}
-            high={urgency.high}
-          />
-        )}
         <div className={styles["table-responsive"]}>
           <div className={styles["table-wrapper"]}>
             <div className={styles["table-title"]}>
               <div className="row">
                 <div className={styles["col-sm-2"]}>
                   <h2>
-                    <strong>Ticket List</strong>
+                    <strong>Clients</strong>
                   </h2>
                 </div>
 
@@ -85,7 +60,7 @@ const UserPanel = (props) => {
                     />
                   </a> */}
 
-                    <NewTicket updateTickets={updateTickets} />
+                    {/* <NewTicket updateTickets={updateTickets} /> */}
                   </div>
                 )}
               </div>
@@ -101,26 +76,23 @@ const UserPanel = (props) => {
             /> */}
               <thead>
                 <tr>
-                  <th>No.</th>
-                  <th>Status</th>
-                  <th>Open Date</th>
-                  <th>Urgency Level</th>
-                  <th>Handling Duration</th>
-                  <th>Actions</th>
+                  <th>Client Name</th>
+                  <th>Open Tickets Number</th>
+                  <th>General Tickets Number</th>
                 </tr>
               </thead>
               <tbody>
                 {!isLoading ? (
-                  tickets.length === 0 ? (
+                  users.length === 0 ? (
                     <tr className={styles["ticket-even-pos"]}>
-                      <td colSpan="9">
+                      <td colSpan="3">
                         <strong>Not Found</strong>
                       </td>
                     </tr>
                   ) : (
-                    tickets.map((ticket, pos) => {
+                    users.map((user, pos) => {
                       return (
-                        <Ticket ticket={ticket} pos={pos} key={ticket._id} />
+                        <User user={user} pos={pos} key={user._id} />
                       );
                     })
                   )
@@ -146,4 +118,4 @@ const UserPanel = (props) => {
   );
 };
 
-export default UserPanel;
+export default AdminPanel;

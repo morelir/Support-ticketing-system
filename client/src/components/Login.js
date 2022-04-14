@@ -45,7 +45,7 @@ const Login = (props) => {
       });
   }
   if (authCtx.isLoggedIn) {
-    history.goBack();
+    return <h1 style={{color:"white"}}>This page is not available</h1>
   } else {
     return (
       <div>

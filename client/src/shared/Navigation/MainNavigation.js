@@ -25,13 +25,17 @@ const MainNavigation = (props) => {
                 </>
               )}
               {authCtx.user.role === "admin" && (
-                <Link to="/AdminPanel"> Support Ticketing System</Link>
+                <Link to="/AdminPanel">
+                  <img src={logo} height={40} /> Support Ticketing System
+                </Link>
               )}
             </h1>
           </>
         ) : (
           <h1 className="main-navigation__title">
-            <Link to="/"> Support Ticketing System</Link>
+            <Link to="/">
+              <img src={logo} height={40} /> Support Ticketing System
+            </Link>
           </h1>
         )}
         <nav className="main-navigation__header-nav">

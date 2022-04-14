@@ -11,6 +11,7 @@ import UserPanel from "./components/UserPanel";
 import AuthContext from "./store/auth-context";
 import ProtectedRoute from "./routes/protectedRoute";
 import MainNavigation from "./shared/Navigation/MainNavigation";
+import AdminPanel from "./components/AdminPanel";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -26,6 +27,11 @@ function App() {
               condition={authCtx.isLoggedIn && authCtx.user.role === "regular"}
               path="/UserPanel"
               component={UserPanel}
+            />
+            <ProtectedRoute
+              condition={authCtx.isLoggedIn && authCtx.user.role === "admin"}
+              path="/AdminPanel"
+              component={AdminPanel}
             />
             <Route path="*">
               <Redirect to="/" />

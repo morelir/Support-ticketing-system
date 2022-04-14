@@ -7,7 +7,6 @@ import EditTicket from "./Ticket/EditTicket";
 const Ticket = (props) => {
   const evenPos = (pos) => pos % 2 == 0;
   const [show, setShow] = useState(false);
-  const [savingForm, setSavingForm] = useState(false);
   const handleClose = () => {
     setShow(false);
   };
