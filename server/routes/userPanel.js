@@ -6,7 +6,7 @@ const path = require("path");
 const { authToken } = require("../auth/authToken");
 const { ImageModel } = require("../models/imageModal");
 const { TicketModel, validNewTicket } = require("../models/ticketModel");
-const {organizeTickets} = require("../utils/functions")
+const { organizeTickets } = require("../utils/functions");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -58,6 +58,20 @@ router.get("/tickets", authToken, async (req, res) => {
     }).lean();
     let [data, low, medium, high] = await organizeTickets(tickets);
     res.json({ tickets: data, low: low, medium: medium, high: high });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.patch("/UpdateTicket",authToken, async (req, res) => {
+  try {
+    let ticket = await TicketModel.findOne({ _id: req.body.id });
+    req.body.updates.map((update, pos) => {
+      ticket[update] = req.body.values[pos];
+    });
+    await ticket.save();
+    console.log(ticket)
+    res.json({ticket:ticket});
   } catch (err) {
     console.log(err);
   }

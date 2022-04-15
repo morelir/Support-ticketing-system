@@ -16,7 +16,14 @@ const User = (props) => {
     setShow(false);
   };
   const handleOpen = () => {
-    setShow(true);
+    // setShow(true);
+    history.push({
+      pathname: "/UserPanel",
+      state: {
+        // location state
+        user:props.user
+      },
+    });
   };
   return (
     <>
@@ -37,7 +44,7 @@ const User = (props) => {
         </td>
       </tr>
 
-      <Modal
+      {/* <Modal
         show={show}
         backdrop="static"
         keyboard={false}
@@ -56,7 +63,7 @@ const User = (props) => {
         <Modal.Body className={styles["modal-body"]}>
             <UserPanel user={props.user}/>
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../../store/auth-context";
 import styles from "./EditTicket.module.css";
 import Button from "../../../shared/FormElements/Button";
@@ -26,6 +26,7 @@ const EditTicket = (props) => {
       file: props.ticket.filePath,
     },
     fileUploaded: false,
+    statusChanged:false
   };
   const authCtx = useContext(AuthContext);
   const [savingForm, setSavingForm] = useState(false);
@@ -33,6 +34,7 @@ const EditTicket = (props) => {
     {
       number,
       status,
+      statusChanged,
       title,
       description,
       urgencyLevel,
@@ -56,8 +58,31 @@ const EditTicket = (props) => {
     e.preventDefault();
   };
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (
+        props.show === true &&
+        authCtx.user.role === "admin" &&
+        status === "Open"
+      ) {
+        setState({ ...initialState, status: "Working on it",statusChanged:true });
+        try{
+          await axios.patch(`/UserPanel/UpdateTicket`, {
+            id: props.ticket._id,
+            updates: ["status"],
+            values: ["Working on it"],
+          },config);
+        }
+        catch(err){
+          console.log("patch update raise error")
+        }
+      }   
+    };
+    checkStatus();
+  }, [props.show]);
+
   const handleChange = (e) => {
-    authCtx.login()
+    authCtx.login();
     setState((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
@@ -118,7 +143,7 @@ const EditTicket = (props) => {
                 as="select"
                 name="urgencyLevel"
                 onChange={handleChange}
-                disabled={authCtx.user.role === "regular" ? true : false}
+                disabled={true}
               >
                 <>
                   <option value={"Open"}>Open</option>
@@ -238,6 +263,8 @@ const EditTicket = (props) => {
         <Modal.Footer className={styles["modal-footer"]}>
           <Button
             onClick={() => {
+              if(statusChanged)
+                props.updateTicketAttr(props.ticket,"status",status)
               props.handleClose();
               reset();
             }}
@@ -249,7 +276,7 @@ const EditTicket = (props) => {
           </Button>
           {authCtx.user.role === "admin" && (
             <>
-              {savingForm ? (
+              {!savingForm ? (
                 <Button
                   // disabled={!fault.formIsValid}
                   color="blue-modal"

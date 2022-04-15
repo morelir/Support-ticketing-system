@@ -6,7 +6,7 @@ import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
-import { FaLessThanEqual } from "react-icons/fa";
+import { capitalizeFirstLetter } from "../utils/functions";
 
 const UserPanel = (props) => {
   const authCtx = useContext(AuthContext);
@@ -20,10 +20,10 @@ const UserPanel = (props) => {
   const getData = async () => {
     try {
       let response;
-      if (props.user) {
+      if (props.location.state) {
         response = await Axios.get("AdminPanel/clientTickets", {
           params: {
-            id: props.user._id,
+            id: props.location.state.user._id,
           },
           headers: { "x-api-key": authCtx.user.token },
         });
@@ -55,6 +55,16 @@ const UserPanel = (props) => {
     setIsLoading(false);
   };
 
+  const updateTicketAttr = (ticket,name,value) => {
+    setIsLoading(true);
+    setTickets(tickets.map((tick)=>{
+      if (tick._id===ticket._id)
+        tick[name]=value;
+      return tick;
+    }))
+    setIsLoading(false);
+  };
+
   return (
     <main>
       <div className={`${styles["container-max-width"]} container-xl `}>
@@ -72,10 +82,17 @@ const UserPanel = (props) => {
                 <div className={styles["col-sm-2"]}>
                   <h2>
                     <strong>Ticket List</strong>
+                    {authCtx.user.role === "admin" && (
+                      <strong>
+                        {" "}
+                        -{" "}
+                        {capitalizeFirstLetter(props.location.state.user.name)}
+                      </strong>
+                    )}
                   </h2>
                 </div>
 
-                {!isLoading && (
+                {!isLoading && authCtx.user.role !== "admin" && (
                   <div className={styles["col-sm-10"]}>
                     {/* <a className={styles["btn"]}>
                     <BsFilterRight
@@ -120,7 +137,7 @@ const UserPanel = (props) => {
                   ) : (
                     tickets.map((ticket, pos) => {
                       return (
-                        <Ticket ticket={ticket} pos={pos} key={ticket._id} />
+                        <Ticket ticket={ticket} pos={pos} key={ticket._id} updateTicketAttr={updateTicketAttr} />
                       );
                     })
                   )

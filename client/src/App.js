@@ -21,10 +21,14 @@ function App() {
       <main>
         <div className="App">
           <Switch>
-            <Route exact path="/"  component={Login}></Route> 
+            <Route exact path="/" component={Login}></Route>
             {/* <Route exact path="/UserPanel"  component={()=>authCtx.isLoggedIn && authCtx.user.role? <UserPanel/>: <Redirect to="/" />}></Route>  */}
             <ProtectedRoute
-              condition={authCtx.isLoggedIn && authCtx.user.role === "regular"}
+              condition={
+                authCtx.isLoggedIn &&
+                (authCtx.user.role === "regular" ||
+                  authCtx.user.role === "admin")
+              }
               path="/UserPanel"
               component={UserPanel}
             />
