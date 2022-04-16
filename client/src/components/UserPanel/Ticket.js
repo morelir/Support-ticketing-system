@@ -51,7 +51,7 @@ const Ticket = (props) => {
           <span>{props.ticket.description}</span>
         </td>
       </tr>
-      <EditTicket ticket={props.ticket} show={show} handleClose={handleClose} updateTicketAttr={props.updateTicketAttr}/>
+      <EditTicket ticket={props.ticket} show={show} handleClose={handleClose} updateTicketAttr={props.updateTicketAttr} pos={props.pos}/>
     </>
   );
 };

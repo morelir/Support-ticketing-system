@@ -1,7 +1,6 @@
 const { ImageModel } = require("../models/imageModal");
 
 exports.organizeTickets = async (tickets) => {
-  // mergeTicketsWithImage and sorted by status
   let [low, medium, high] = [0, 0, 0];
   try {
     let data = await Promise.all(
@@ -19,10 +18,12 @@ exports.organizeTickets = async (tickets) => {
         };
       })
     );
-    data.sort((ticket) => {
-      if (ticket.status === "Open") return -1;
-      else if (ticket.status === "Working on it") return 0;
-      else return 1;
+    data.sort((a,b) => {
+      if (a.status === "Close") return 1;//a is greater than b by the ordering criterion
+      else if (b.status === "Close") return -1;//a is less than b by some ordering criterion
+      else if (a.status === "Working on it") return 1;
+      else if (b.status === "Working on it") return -1;
+      else return 0;
     });
     return [data, low, medium, high];
   } catch (err) {

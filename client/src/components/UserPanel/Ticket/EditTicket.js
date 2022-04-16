@@ -26,7 +26,7 @@ const EditTicket = (props) => {
       file: props.ticket.filePath,
     },
     fileUploaded: false,
-    statusChanged:false
+    statusChanged: false,
   };
   const authCtx = useContext(AuthContext);
   const [savingForm, setSavingForm] = useState(false);
@@ -54,8 +54,29 @@ const EditTicket = (props) => {
     setState({ ...initialState });
   };
 
-  const submitNewTicket = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setSavingForm(true);
+    try {
+      await axios.patch(
+        `/UserPanel/UpdateTicket`,
+        {
+          id: props.ticket._id,
+          updates: ["title", "description", "urgencyLevel","status"],
+          values: [title, description, urgencyLevel,status],
+        },
+        config
+      );
+      props.updateTicketAttr(
+        props.ticket,
+        props.pos,
+        ["title", "description", "urgencyLevel","status"],
+        [title, description, urgencyLevel,status]
+      );
+    } catch (err) {
+      console.log("patch edit ticket raise error");
+    }
+    setSavingForm(false);
   };
 
   useEffect(() => {
@@ -65,24 +86,30 @@ const EditTicket = (props) => {
         authCtx.user.role === "admin" &&
         status === "Open"
       ) {
-        setState({ ...initialState, status: "Working on it",statusChanged:true });
-        try{
-          await axios.patch(`/UserPanel/UpdateTicket`, {
-            id: props.ticket._id,
-            updates: ["status"],
-            values: ["Working on it"],
-          },config);
+        setState({
+          ...initialState,
+          status: "Working on it",
+          statusChanged: true,
+        });
+        try {
+          await axios.patch(
+            `/UserPanel/UpdateTicket`,
+            {
+              id: props.ticket._id,
+              updates: ["status"],
+              values: ["Working on it"],
+            },
+            config
+          );
+        } catch (err) {
+          console.log("patch update ticket status raise error");
         }
-        catch(err){
-          console.log("patch update raise error")
-        }
-      }   
+      }
     };
     checkStatus();
   }, [props.show]);
 
   const handleChange = (e) => {
-    authCtx.login();
     setState((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
@@ -118,7 +145,7 @@ const EditTicket = (props) => {
           </h3>
         </Modal.Title>
       </Modal.Header>
-      <Form onSubmit={submitNewTicket}>
+      <Form onSubmit={submit}>
         <Modal.Body className={styles["modal-body"]}>
           <Row className="mb-3" style={{ marginTop: "15px" }}>
             <Form.Group as={Col}>
@@ -251,11 +278,10 @@ const EditTicket = (props) => {
               </>
             ) : (
               <>
+                <Form.Label>
+                  <strong>Uploaded File</strong>
+                </Form.Label>
                 <Image src={selectedFile.file} />
-                <Message style={{ wordWrap: "break-word" }}>
-                  {" "}
-                  Uploaded file
-                </Message>
               </>
             )}
           </Row>
@@ -263,8 +289,8 @@ const EditTicket = (props) => {
         <Modal.Footer className={styles["modal-footer"]}>
           <Button
             onClick={() => {
-              if(statusChanged)
-                props.updateTicketAttr(props.ticket,"status",status)
+              if (statusChanged)
+                props.updateTicketAttr(props.ticket,props.pos, ["status"], [status]);
               props.handleClose();
               reset();
             }}

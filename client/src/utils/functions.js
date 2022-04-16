@@ -86,6 +86,10 @@ export const capitalizeFirstLetter = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
+export const firstLetterToLowerCase = (word) => { 
+  return word.charAt(0).toLowerCase() + word.slice(1);
+};
+
 export const displayDate = (dateFormat) => {
   let date = new Date(dateFormat);
   let month = date.getMonth() + 1;

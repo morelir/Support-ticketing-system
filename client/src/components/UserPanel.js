@@ -6,7 +6,10 @@ import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
-import { capitalizeFirstLetter } from "../utils/functions";
+import {
+  capitalizeFirstLetter,
+  firstLetterToLowerCase,
+} from "../utils/functions";
 
 const UserPanel = (props) => {
   const authCtx = useContext(AuthContext);
@@ -55,13 +58,39 @@ const UserPanel = (props) => {
     setIsLoading(false);
   };
 
-  const updateTicketAttr = (ticket,name,value) => {
+  const updateTicketAttr = (ticket, index, names, values) => {
     setIsLoading(true);
-    setTickets(tickets.map((tick)=>{
-      if (tick._id===ticket._id)
-        tick[name]=value;
-      return tick;
-    }))
+    let statusChanged = false;
+    names.map((name, pos) => {
+      if (name === "status" && ticket[name]!==values[pos]) statusChanged = true;
+      else if (name === "urgencyLevel") {
+        setUrgency((prev) => {
+          return {
+            ...prev,
+            [firstLetterToLowerCase(values[pos])]:
+              prev[firstLetterToLowerCase(values[pos])] + 1,
+            [firstLetterToLowerCase(ticket[name])]:
+              prev[firstLetterToLowerCase(ticket[name])] - 1,
+          };
+        });
+      }
+      ticket[name] = values[pos];
+    });
+    let newTickets = [
+      ...tickets.slice(0, index),
+      ticket,
+      ...tickets.slice(index + 1),
+    ];
+    if (statusChanged) {
+      newTickets.sort((a,b) => {
+        if (a.status === "Close") return 1;//a is greater than b by the ordering criterion
+        else if (b.status === "Close") return -1;//a is less than b by some ordering criterion
+        else if (a.status === "Working on it") return 1;
+        else if (b.status === "Working on it") return -1;
+        else return 0;
+      });
+    }
+    setTickets(newTickets);
     setIsLoading(false);
   };
 
@@ -137,7 +166,12 @@ const UserPanel = (props) => {
                   ) : (
                     tickets.map((ticket, pos) => {
                       return (
-                        <Ticket ticket={ticket} pos={pos} key={ticket._id} updateTicketAttr={updateTicketAttr} />
+                        <Ticket
+                          ticket={ticket}
+                          pos={pos}
+                          key={ticket._id}
+                          updateTicketAttr={updateTicketAttr}
+                        />
                       );
                     })
                   )
