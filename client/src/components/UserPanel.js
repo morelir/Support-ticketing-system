@@ -1,9 +1,11 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
+import {useHistory} from "react-router-dom"
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
+import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
 import {
@@ -13,6 +15,7 @@ import {
 
 const UserPanel = (props) => {
   const authCtx = useContext(AuthContext);
+  const history=useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [urgency, setUrgency] = useState({});
@@ -23,6 +26,7 @@ const UserPanel = (props) => {
   const getData = async () => {
     try {
       let response;
+      let data = Date.now();
       if (props.location.state) {
         response = await Axios.get("AdminPanel/clientTickets", {
           params: {
@@ -33,6 +37,7 @@ const UserPanel = (props) => {
       } else {
         response = await Axios.get("UserPanel/tickets", config);
       }
+      console.log(Date.now() - data);
       setTickets(response.data.tickets);
       setUrgency({
         low: response.data.low,
@@ -62,7 +67,8 @@ const UserPanel = (props) => {
     setIsLoading(true);
     let statusChanged = false;
     names.map((name, pos) => {
-      if (name === "status" && ticket[name]!==values[pos]) statusChanged = true;
+      if (name === "status" && ticket[name] !== values[pos])
+        statusChanged = true;
       else if (name === "urgencyLevel") {
         setUrgency((prev) => {
           return {
@@ -82,9 +88,11 @@ const UserPanel = (props) => {
       ...tickets.slice(index + 1),
     ];
     if (statusChanged) {
-      newTickets.sort((a,b) => {
-        if (a.status === "Close") return 1;//a is greater than b by the ordering criterion
-        else if (b.status === "Close") return -1;//a is less than b by some ordering criterion
+      newTickets.sort((a, b) => {
+        if (a.status === "Close")
+          return 1; //a is greater than b by the ordering criterion
+        else if (b.status === "Close")
+          return -1; //a is less than b by some ordering criterion
         else if (a.status === "Working on it") return 1;
         else if (b.status === "Working on it") return -1;
         else return 0;
@@ -107,6 +115,12 @@ const UserPanel = (props) => {
         <div className={styles["table-responsive"]}>
           <div className={styles["table-wrapper"]}>
             <div className={styles["table-title"]}>
+              {authCtx.user.role === "admin" && (
+                  <IoArrowBackCircleSharp
+                    className={styles["arrowBack"]}
+                    onClick={()=>{ history.replace("/AdminPanel");}}
+                  />
+              )}
               <div className="row">
                 <div className={styles["col-sm-2"]}>
                   <h2>

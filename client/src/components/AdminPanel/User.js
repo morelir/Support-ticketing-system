@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-
 import styles from "./User.module.css";
-import Modal from "react-bootstrap/Modal";
-import { displayDate, getTimeDuration } from "../../utils/functions";
-import Button from "../../shared/FormElements/Button";
-import UserPanel from "../UserPanel";
+import {capitalizeFirstLetter} from "../../utils/functions";
+
 
 const User = (props) => {
   const evenPos = (pos) => pos % 2 == 0;
@@ -33,7 +30,7 @@ const User = (props) => {
         }
         onClick={handleOpen}
       >
-        <td>{props.user.name}</td>
+        <td><strong>{capitalizeFirstLetter(props.user.name)}</strong></td>
 
         <td>
           <strong>3 </strong>

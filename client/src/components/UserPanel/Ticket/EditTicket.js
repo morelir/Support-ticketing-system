@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
 import Message from "../../../shared/FormElements/Message";
-import { displayDate, getTimeDuration } from "../../../utils/functions";
+import { displayDate, getTimeDuration} from "../../../utils/functions";
 import axios from "axios";
 
 const EditTicket = (props) => {
@@ -27,6 +27,7 @@ const EditTicket = (props) => {
     },
     fileUploaded: false,
     statusChanged: false,
+    formIsValid: false,
   };
   const authCtx = useContext(AuthContext);
   const [savingForm, setSavingForm] = useState(false);
@@ -42,6 +43,7 @@ const EditTicket = (props) => {
       close_date,
       selectedFile,
       fileUploaded,
+      formIsValid,
     },
     setState,
   ] = useState(initialState);
@@ -62,16 +64,16 @@ const EditTicket = (props) => {
         `/UserPanel/UpdateTicket`,
         {
           id: props.ticket._id,
-          updates: ["title", "description", "urgencyLevel","status"],
-          values: [title, description, urgencyLevel,status],
+          updates: ["title", "description", "urgencyLevel", "status"],
+          values: [title, description, urgencyLevel, status],
         },
         config
       );
       props.updateTicketAttr(
         props.ticket,
         props.pos,
-        ["title", "description", "urgencyLevel","status"],
-        [title, description, urgencyLevel,status]
+        ["title", "description", "urgencyLevel", "status"],
+        [title, description, urgencyLevel, status]
       );
     } catch (err) {
       console.log("patch edit ticket raise error");
@@ -108,6 +110,28 @@ const EditTicket = (props) => {
     };
     checkStatus();
   }, [props.show]);
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log(formIsValid);
+      console.log("checking form validity");
+      setState((prevState) => {
+        return {
+          ...prevState,
+          formIsValid:
+            description.length > 0 &&
+            title.length > 0 &&
+            (description !== props.ticket.description ||
+              title !== props.ticket.title ||
+              urgencyLevel !== props.ticket.urgencyLevel),
+        };
+      });
+    }, 250);
+    return () => {
+      console.log("Clean-Up Timeout");
+      clearTimeout(identifier);
+    };
+  }, [description, urgencyLevel, title]);
 
   const handleChange = (e) => {
     setState((prevState) => {
@@ -203,6 +227,38 @@ const EditTicket = (props) => {
               />
             </Form.Group>
           </Row>
+
+          <Row className="mb-3">
+            <Form.Group controlId="formFile" className="mb-3" as={Col}>
+              <Form.Label>
+                <strong>Duration</strong>
+              </Form.Label>
+              <Form.Control
+                value={getTimeDuration(open_date)}
+                disabled={true}
+              />
+            </Form.Group>
+            <Form.Group as={Col}>
+              <Form.Label>
+                <strong>Urgency level</strong>
+              </Form.Label>
+              <Form.Control
+                type="text"
+                value={urgencyLevel}
+                as="select"
+                name="urgencyLevel"
+                onChange={handleChange}
+                disabled={authCtx.user.role === "regular" ? true : false}
+              >
+                <>
+                  <option value={"Low"}>Low</option>
+                  <option value={"Medium"}>Medium</option>
+                  <option value={"High"}>High</option>
+                </>
+              </Form.Control>
+            </Form.Group>
+          </Row>
+
           <Row className="mb-3" style={{ marginTop: "15px" }}>
             <Form.Group as={Col}>
               <Form.Label>
@@ -234,39 +290,7 @@ const EditTicket = (props) => {
               />
             </Form.Group>
           </Row>
-          <Row className="mb-3">
-            <Form.Group as={Col}>
-              <Form.Label>
-                <strong>Urgency level</strong>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                value={urgencyLevel}
-                as="select"
-                name="urgencyLevel"
-                onChange={handleChange}
-                disabled={authCtx.user.role === "regular" ? true : false}
-              >
-                <>
-                  <option value={"Low"}>Low</option>
-                  <option value={"Medium"}>Medium</option>
-                  <option value={"High"}>High</option>
-                </>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="formFile" className="mb-3" as={Col}>
-              <Form.Label>
-                <strong>Upload Photo</strong>
-              </Form.Label>
-              <Form.Control
-                type="file"
-                accept=".png,.jpg,.jpeg"
-                name="file"
-                onChange={onFileUpload}
-                disabled={authCtx.user.role === "regular" ? true : false}
-              />
-            </Form.Group>
-          </Row>
+
           <Row className="mb-3">
             {fileUploaded ? (
               <>
@@ -290,7 +314,12 @@ const EditTicket = (props) => {
           <Button
             onClick={() => {
               if (statusChanged)
-                props.updateTicketAttr(props.ticket,props.pos, ["status"], [status]);
+                props.updateTicketAttr(
+                  props.ticket,
+                  props.pos,
+                  ["status"],
+                  [status]
+                );
               props.handleClose();
               reset();
             }}
@@ -304,7 +333,7 @@ const EditTicket = (props) => {
             <>
               {!savingForm ? (
                 <Button
-                  // disabled={!fault.formIsValid}
+                  disabled={!formIsValid}
                   color="blue-modal"
                   type="submit"
                 >

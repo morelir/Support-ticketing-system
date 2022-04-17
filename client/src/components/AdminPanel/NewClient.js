@@ -1,32 +1,29 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../store/auth-context";
-import styles from "./NewTicket.module.css";
+import styles from "./NewClient.module.css";
 import Button from "../../shared/FormElements/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
-import Image from "react-bootstrap/Image";
 import Message from "../../shared/FormElements/Message";
 import { MdOutlineAddCircle } from "react-icons/md";
 import axios from "axios";
 
 const initialState = {
-  title: "",
-  description: "",
-  urgencyLevel: "Low",
-  selectedFile: {
-    name: "",
-    file: "",
-  },
+  name: "",
+  email: "",
+  pass: "",
+  confPass: "",
+  formIsValid: false,
 };
 
-const NewTicket = (props) => {
+const NewClient = (props) => {
   const authCtx = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [savingForm, setSavingForm] = useState(false);
-  const [{ title, description, urgencyLevel, selectedFile }, setState] =
+  const [{ name, email, pass, confPass, formIsValid }, setState] =
     useState(initialState);
 
   const config = {
@@ -43,42 +40,49 @@ const NewTicket = (props) => {
 
   const reset = () => {
     setState({ ...initialState });
-    // setSavingForm(false);
   };
 
-  const submitNewTicket = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setSavingForm(true);
-    console.log(config);
-    const ticketID = Math.floor(Math.random() * Date.now()).toString();
-    let data = new FormData();
-    data.append("file", selectedFile.file, `${ticketID}-${selectedFile.name}`);
-    console.log(data);
     try {
-      let response = await axios.post("/UserPanel/AddFile", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      response = await axios.post(
-        "/UserPanel/NewTicket",
+      let response = await axios.post(
+        "/AdminPanel/newClient",
         {
-          number: ticketID,
-          status: "Open",
-          clientID: authCtx.user._id,
-          title: title,
-          description: description,
-          urgencyLevel: urgencyLevel,
+          name: name,
+          email: email,
+          pass: pass,
         },
         config
       );
-      props.updateTickets(response.data.tickets,response.data.low,response.data.medium,response.data.high);
-      setSavingForm(false);
+      props.updateClients(response.data.users);
     } catch (err) {
-      console.log(err);
-      setSavingForm(false);
+      console.log(err.response.data.msg);
     }
+    setSavingForm(false);
   };
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("checking form validity");
+      setState((prevState) => {
+        return {
+          ...prevState,
+          formIsValid:
+            name.length > 2 &&
+            email.includes("@") > 0 &&
+            email.length > 2 &&
+            pass.length > 3 &&
+            confPass.length > 3 &&
+            pass === confPass,
+        };
+      });
+    }, 250);
+    return () => {
+      console.log("Clean-Up Timeout");
+      clearTimeout(identifier);
+    };
+  }, [name, email, pass, confPass]);
 
   const handleChange = (e) => {
     setState((prevState) => {
@@ -86,28 +90,16 @@ const NewTicket = (props) => {
     });
   };
 
-  const onFileUpload = (e) => {
-    const file = e.target.files[0];
-    setState((prevState) => {
-      return {
-        ...prevState,
-        selectedFile: {
-          name: file.name,
-          file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
-        }, //URL.createObjectURL(formData.get("myFile"))
-      };
-    });
-  };
-
   return (
     <>
       <Button
-        className={styles.btnNewTicket}
+        className={styles.btnNewClient}
         onClick={handleOpen}
         colorHover="white"
-        style={{fontSize:"1.2rem"}}
+        style={{ fontSize: "1.2rem" }}
       >
-        <strong >New Ticket</strong> <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
+        <strong>New Client</strong>{" "}
+        <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
       </Button>
 
       <Modal
@@ -121,81 +113,71 @@ const NewTicket = (props) => {
         <Modal.Header className={styles["modal-header"]}>
           <Modal.Title>
             <h3>
-              <strong>New Ticket</strong>
+              <strong>New Client</strong>
             </h3>
           </Modal.Title>
         </Modal.Header>
-        <Form onSubmit={submitNewTicket}>
+        <Form onSubmit={submit}>
           <Modal.Body className={styles["modal-body"]}>
             <Row className="mb-3" style={{ marginTop: "15px" }}>
               <Form.Group as={Col}>
                 <Form.Label>
-                  <strong>Title <span style={{ color: "orange" }}>*</span></strong>
+                  <strong>
+                    Name <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
                   type="text"
-                  name="title"
-                  value={title}
+                  name="name"
+                  value={name}
                   onChange={handleChange}
                 />
               </Form.Group>
             </Row>
-            <Row className="mb-3">
+            <Row className="mb-3" style={{ marginTop: "15px" }}>
               <Form.Group as={Col}>
                 <Form.Label>
-                  <strong>Problem Description <span style={{ color: "orange" }}>*</span></strong>
+                  <strong>
+                    Email <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
-                  style={{ height: "10em" }}
-                  as="textarea"
                   type="text"
-                  name="description"
-                  value={description}
+                  name="email"
+                  value={email}
                   onChange={handleChange}
                 />
               </Form.Group>
             </Row>
-            <Row className="mb-3">
+            <Row className="mb-3" style={{ marginTop: "15px" }}>
               <Form.Group as={Col}>
                 <Form.Label>
-                  <strong>Urgency level </strong>
+                  <strong>
+                    Password <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
-                  type="text"
-                  value={urgencyLevel}
-                  as="select"
-                  name="urgencyLevel"
+                  type="password"
+                  name="pass"
+                  value={pass}
                   onChange={handleChange}
-                >
-                  <>
-                    <option value={"Low"}>Low</option>
-                    <option value={"Medium"}>Medium</option>
-                    <option value={"High"}>High</option>
-                  </>
-                </Form.Control>
+                />
               </Form.Group>
+            </Row>
+            <Row className="mb-3" style={{ marginTop: "15px" }}>
               <Form.Group controlId="formFile" className="mb-3" as={Col}>
                 <Form.Label>
-                  <strong>Upload Photo </strong>
+                  <strong>
+                    Confirm Password <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
-                  type="file"
-                  accept=".png,.jpg,.jpeg"
-                  name="file"
-                  onChange={onFileUpload}
+                  type="password"
+                  name="confPass"
+                  value={confPass}
+                  onChange={handleChange}
                 />
               </Form.Group>
-            </Row>
-            <Row className="mb-3">
-              {selectedFile.file !== "" && (
-                <>
-                  <Image src={URL.createObjectURL(selectedFile.file)} />
-                  <Message style={{ wordWrap: "break-word" }}>
-                    {" "}
-                    Uploaded the file successfully : {selectedFile.name}{" "}
-                  </Message>
-                </>
-              )}
             </Row>
           </Modal.Body>
           <Modal.Footer className={styles["modal-footer"]}>
@@ -211,11 +193,7 @@ const NewTicket = (props) => {
               Close
             </Button>
             {!savingForm ? (
-              <Button
-                // disabled={!fault.formIsValid}
-                color="blue-modal"
-                type="submit"
-              >
+              <Button disabled={!formIsValid} color="blue-modal" type="submit">
                 Save
               </Button>
             ) : (
@@ -237,4 +215,4 @@ const NewTicket = (props) => {
   );
 };
 
-export default NewTicket;
+export default NewClient;

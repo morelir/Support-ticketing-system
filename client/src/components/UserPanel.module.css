@@ -9,6 +9,18 @@
   font-size: 30px;
 }
 
+.arrowBack{
+  position: absolute;
+  top: 25px;
+  left: 10px;
+  font-size: 30px;
+}
+
+.arrowBack:hover,
+.arrowBack:active{
+  color: #92a0b1;
+}
+
 .slide-in-up-enter {
   transform: translateY(-30%);
 }
@@ -54,6 +66,7 @@
   border-radius: 3px 3px 0 0;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  position: relative;
 }
 
 .table-title h2 {

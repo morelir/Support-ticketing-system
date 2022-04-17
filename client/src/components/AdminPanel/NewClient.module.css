@@ -1,7 +1,6 @@
-
-.btnNewTicket {
+.btnNewClient {
   background-color: #509ad6;
-  float:right
+  float: right;
 }
 
 .modal {
@@ -16,29 +15,26 @@
   /* border-radius: 40px; */
   border: 8px solid #212529;
   border-radius: 20px;
-  text-align: center;
   background-color: #f7f7f7;
 }
 
 .modal-header {
   color: white;
   background: #212529;
-  
+
   display: block;
   text-align: center;
   border: 0;
-  
+
   margin-bottom: "100px";
 }
 
 .modal-body {
   padding: 0 0.85rem;
   font-size: 1.1rem;
-  
 }
 
 .modal-footer {
-  
   font-size: 1.1rem;
 }
 

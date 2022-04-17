@@ -7,6 +7,7 @@ import Spinner from "react-bootstrap/Spinner";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
 import User from "./AdminPanel/User";
+import NewClient from "./AdminPanel/NewClient";
 
 const AdminPanel = () => {
   const authCtx = useContext(AuthContext);
@@ -31,7 +32,7 @@ const AdminPanel = () => {
     getData();
   }, []);
 
-  const updateUsers = (users) => {
+  const updateClients = (users) => {
     setIsLoading(true);
     setUsers(users);
     setIsLoading(false);
@@ -59,8 +60,7 @@ const AdminPanel = () => {
                       style={{ fontSize: "25px" }}
                     />
                   </a> */}
-
-                    {/* <NewTicket updateTickets={updateTickets} /> */}
+                    <NewClient updateClients={updateClients}/>
                   </div>
                 )}
               </div>
