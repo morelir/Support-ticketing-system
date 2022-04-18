@@ -18,6 +18,7 @@ const AdminPanel = () => {
   };
 
   const getData = async () => {
+    let time=Date.now()
     try {
       let response = await Axios.get("AdminPanel/users", config);
       setUsers(response.data.users);
@@ -26,6 +27,7 @@ const AdminPanel = () => {
       console.log("err");
       console.log(err.response);
     }
+    console.log(Date.now()-time)
   };
 
   useEffect(() => {

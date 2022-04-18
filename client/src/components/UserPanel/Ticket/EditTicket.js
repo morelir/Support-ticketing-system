@@ -113,7 +113,6 @@ const EditTicket = (props) => {
 
   useEffect(() => {
     const identifier = setTimeout(() => {
-      console.log(formIsValid);
       console.log("checking form validity");
       setState((prevState) => {
         return {

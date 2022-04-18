@@ -33,11 +33,11 @@ const User = (props) => {
         <td><strong>{capitalizeFirstLetter(props.user.name)}</strong></td>
 
         <td>
-          <strong>3 </strong>
+          <strong>{props.user.openTickets}</strong>
         </td>
 
         <td>
-          <strong>9 </strong>
+          <strong>{props.user.generalTickets}</strong>
         </td>
       </tr>
 

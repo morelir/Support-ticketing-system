@@ -26,14 +26,12 @@ const Login = (props) => {
       pass: password,
     })
       .then((response) => {
-        console.log(response.data.user);
         const expirationTime = new Date(new Date().getTime() + 3600 * 1000);
         const objUserAndToken = {
           ...response.data.user,
           token: response.data.token,
         };
         authCtx.login(objUserAndToken, expirationTime.toISOString());
-        console.log(authCtx.isLoggedIn);
         if (response.data.user.role === "regular")
           history.replace("/UserPanel");
         else if (response.data.user.role === "admin")
