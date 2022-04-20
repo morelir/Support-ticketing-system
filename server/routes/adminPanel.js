@@ -26,9 +26,18 @@ router.get("/users", authToken, async (req, res) => {
     let users = await UserModel.find({ role: "regular" }).lean();
     users = await Promise.all(
       users.map(async (user) => {
-        let generalTickets = await TicketModel.count({ clientID: user._id }).lean();
-        let openTickets = await TicketModel.count({ clientID: user._id ,status:"Open"}).lean();
-        return { ...user, generalTickets:generalTickets,openTickets:openTickets};
+        let [generalTickets, openTickets] = await Promise.all([
+          TicketModel.count({ clientID: user._id }).lean(),
+          TicketModel.count({
+            clientID: user._id,
+            status: "Open",
+          }).lean(),
+        ]);
+        return {
+          ...user,
+          generalTickets: generalTickets,
+          openTickets: openTickets,
+        };
       })
     );
     console.log(users);
@@ -37,6 +46,7 @@ router.get("/users", authToken, async (req, res) => {
     console.log(err);
   }
 });
+
 
 router.post("/newClient", authToken, async (req, res) => {
   let validBody = validUser(req.body);
@@ -51,11 +61,9 @@ router.post("/newClient", authToken, async (req, res) => {
     let users = await UserModel.find({ role: "regular" });
     res.json({ users: users });
   } catch (err) {
-    res
-      .status(401)
-      .json({
-        msg: "Email or Password already in system or there another problem",
-      });
+    res.status(401).json({
+      msg: "Email or Password already in system or there another problem",
+    });
   }
 });
 
