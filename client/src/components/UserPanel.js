@@ -22,12 +22,14 @@ const UserPanel = (props) => {
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
+  const [client, setClient] = useState({});;
 
   const getData = async () => {
     try {
       let response;
       let data = Date.now();
       if (props.location.state) {
+        setClient(props.location.state.user)
         response = await Axios.get("AdminPanel/clientTickets", {
           params: {
             id: props.location.state.user._id,
@@ -64,7 +66,6 @@ const UserPanel = (props) => {
   };
 
   const updateTicketAttr = (ticket, index, names, values) => {
-    setIsLoading(true);
     let statusChanged = false;
     names.map((name, pos) => {
       if (name === "status" && ticket[name] !== values[pos])
@@ -99,7 +100,6 @@ const UserPanel = (props) => {
       });
     }
     setTickets(newTickets);
-    setIsLoading(false);
   };
 
   return (
@@ -185,6 +185,7 @@ const UserPanel = (props) => {
                           pos={pos}
                           key={ticket._id}
                           updateTicketAttr={updateTicketAttr}
+                          client={client}
                         />
                       );
                     })

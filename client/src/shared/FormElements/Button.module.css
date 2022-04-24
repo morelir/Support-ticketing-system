@@ -79,12 +79,7 @@
   color:#3f4a53;
 }
 
-.button--color--hover--white:hover,
-.button--color--hover--white:hover:active{
-  background: white;
-  border-color: white;
-  color:#3f4a53;
-}
+
 
 .button--color--grey-modal{
   width: 75px;
@@ -151,5 +146,32 @@
   color: white;
   background: rgb(85, 83, 83);
   border-color: rgb(85, 83, 83);
+}
+
+.button--color--green {
+  color: rgb(255, 255, 255);
+  background: #71b54b;
+  border-color: #71b54b;
+}
+
+.button--color--green:hover,
+.button--color--green:active {
+  background: #bfbfbf;
+  border-color: #bfbfbf;
+  color:#3f4a53
+}
+
+
+.button--color--hover--white:hover,
+.button--color--hover--white:active{
+  background: white;
+  border-color: white;
+  color:#3f4a53;
+}
+.button--color--hover--grey:hover,
+.button--color--hover--grey:active{
+  background: #bfbfbf;
+  border-color: #bfbfbf;
+  color:#3f4a53
 }
 

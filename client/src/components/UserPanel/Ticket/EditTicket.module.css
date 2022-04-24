@@ -53,3 +53,15 @@
   border: 8px none #212529;
   border-radius: 20px;
 }
+
+.col-sm-2 {
+  width: 16.66666667%;
+}
+.col-sm-8 {
+  width: 66.33333333%;
+}
+
+.col-sm-10 {
+  width: 80.33333333%;
+}
+

@@ -3,6 +3,7 @@ import styles from "./Ticket.module.css";
 import { displayDate, getTimeDuration } from "../../utils/functions";
 import Button from "../../shared/FormElements/Button";
 import EditTicket from "./Ticket/EditTicket";
+import ModalDialog from "react-bootstrap/esm/ModalDialog";
 
 const Ticket = (props) => {
   const evenPos = (pos) => pos % 2 == 0;
@@ -51,7 +52,7 @@ const Ticket = (props) => {
           <span>{props.ticket.description}</span>
         </td>
       </tr>
-      <EditTicket ticket={props.ticket} show={show} handleClose={handleClose} updateTicketAttr={props.updateTicketAttr} pos={props.pos}/>
+      <EditTicket client={props.client} ticket={props.ticket} show={show} handleClose={handleClose} updateTicketAttr={props.updateTicketAttr} pos={props.pos}/>
     </>
   );
 };
