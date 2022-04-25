@@ -9,9 +9,11 @@ exports.organizeTickets = async (tickets) => {
           { filePath: { $regex: ticket.number, $options: "i" } },
           "-_id filePath"
         ).lean();
-        if (ticket.urgencyLevel === "Low") low++;
-        else if (ticket.urgencyLevel === "Medium") medium++;
-        else high++;
+        if(ticket.status!="Close"){
+          if (ticket.urgencyLevel === "Low") low++;
+          else if (ticket.urgencyLevel === "Medium") medium++;
+          else high++;
+        }
         return {
           ...ticket,
           filePath: image.filePath,

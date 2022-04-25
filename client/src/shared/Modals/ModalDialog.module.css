@@ -5,6 +5,7 @@
 
 .modal .modal-dialog {
   max-width: 500px;
+  margin:4rem auto;
 }
 
 .modal-content {

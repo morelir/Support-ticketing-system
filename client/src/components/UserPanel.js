@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
@@ -15,21 +15,21 @@ import {
 
 const UserPanel = (props) => {
   const authCtx = useContext(AuthContext);
-  const history=useHistory();
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
   const [urgency, setUrgency] = useState({});
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
-  const [client, setClient] = useState({});;
+  const [client, setClient] = useState({});
 
   const getData = async () => {
     try {
       let response;
       let data = Date.now();
       if (props.location.state) {
-        setClient(props.location.state.user)
+        setClient(props.location.state.user);
         response = await Axios.get("AdminPanel/clientTickets", {
           params: {
             id: props.location.state.user._id,
@@ -70,7 +70,16 @@ const UserPanel = (props) => {
     names.map((name, pos) => {
       if (name === "status" && ticket[name] !== values[pos])
         statusChanged = true;
-      else if (name === "urgencyLevel") {
+      if (name === "status" && values[pos] === "Close") {
+        setUrgency((prev) => {
+          return {
+            ...prev,
+            [firstLetterToLowerCase(ticket["urgencyLevel"])]:
+              prev[firstLetterToLowerCase(ticket["urgencyLevel"])] - 1,
+          };
+        });
+      }
+      if (name === "urgencyLevel") {
         setUrgency((prev) => {
           return {
             ...prev,
@@ -99,7 +108,7 @@ const UserPanel = (props) => {
         else return 0;
       });
     }
-    setTickets(newTickets);
+    setTickets((prev)=>newTickets);
   };
 
   return (
@@ -116,10 +125,12 @@ const UserPanel = (props) => {
           <div className={styles["table-wrapper"]}>
             <div className={styles["table-title"]}>
               {authCtx.user.role === "admin" && (
-                  <IoArrowBackCircleSharp
-                    className={styles["arrowBack"]}
-                    onClick={()=>{ history.replace("/AdminPanel");}}
-                  />
+                <IoArrowBackCircleSharp
+                  className={styles["arrowBack"]}
+                  onClick={() => {
+                    history.replace("/AdminPanel");
+                  }}
+                />
               )}
               <div className="row">
                 <div className={styles["col-sm-2"]}>

@@ -1,16 +1,19 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import styles from "./MessageModal.module.css";
 
 const MessageModal = (props) => {
-
   const handleClose = () => {
     props.setShowCreatedMessage(false);
   };
 
   return (
-    <Modal show={props.showCreatedMessage} className={styles.modal}>
+    <Modal
+      show={props.showCreatedMessage}
+      className={styles.modal}
+      contentClassName={styles["modal-content"]}
+    >
       <Modal.Header className={styles["modal-header"]}>
         <Modal.Title>
           <h3>
@@ -21,7 +24,7 @@ const MessageModal = (props) => {
       <Modal.Body>{props.children}</Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleClose}>
-            Confirm
+          Confirm
         </Button>
       </Modal.Footer>
     </Modal>

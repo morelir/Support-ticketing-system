@@ -29,7 +29,6 @@ const EditTicket = (props) => {
       file: props.ticket.filePath,
     },
     fileUploaded: false,
-    statusChanged: false,
     formIsValid: false,
   };
   const authCtx = useContext(AuthContext);
@@ -39,7 +38,6 @@ const EditTicket = (props) => {
     {
       number,
       status,
-      statusChanged,
       title,
       description,
       urgencyLevel,
@@ -65,8 +63,9 @@ const EditTicket = (props) => {
   };
 
   const reset = () => {
+    console.log(initialState)
     setState({ ...initialState });
-  };
+  }
 
   const submit = async (e) => {
     e.preventDefault();
@@ -96,53 +95,64 @@ const EditTicket = (props) => {
 
   const handleCloseTicket = async (setSavingStatus, handleCloseDialog) => {
     setSavingStatus(true);
+    let closeDate = new Date();
     try {
+      let date=Date.now();
       await axios.patch(
         `/UserPanel/UpdateTicket`,
         {
           id: props.ticket._id,
-          updates: ["status"],
-          values: ["Close"],
+          updates: ["status", "close_date"],
+          values: ["Close", closeDate],
         },
         config
       );
-      props.updateTicketAttr(props.ticket, props.pos, ["status"], ["Close"]);
-      await sendEmail();
+      await props.updateTicketAttr(
+        props.ticket,
+        props.pos,
+        ["status", "close_date"],
+        ["Close", closeDate]
+      );
+      setState((prev)=>{return {...prev,status:"Close",close_date:closeDate}})
+      await sendEmail(`
+      The ticket you opened at ${displayDate(open_date)} had been closed.`);
+      console.log(Date.now()-date)
       handleCloseDialog();
       props.handleClose();
+      setShowCreatedMessage(true);
     } catch (err) {
       console.log(err);
     }
     setSavingStatus(false);
+    
   };
 
-  const sendEmail = async () => {
+  const sendEmail = async (message) => {
     try {
-      console.log(toSend.to_email);
       await send(
         "service_nufcz9l",
         "template_dbvv02n",
-        toSend,
+        { ...toSend, message: message },
         "HNGMfPAmoequ8VK_l"
       );
-      setShowCreatedMessage(true);
     } catch (err) {
       console.log(err);
       throw new Error(err.text);
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { //change status to Working on it for open ticket when open edit modal.
     const checkStatus = async () => {
       if (
         props.show === true &&
         authCtx.user.role === "admin" &&
         status === "Open"
       ) {
+        console.log(true)
+        console.log(status)
         setState({
           ...initialState,
           status: "Working on it",
-          statusChanged: true,
         });
         try {
           await axios.patch(
@@ -189,19 +199,24 @@ const EditTicket = (props) => {
     });
   };
 
-  const onFileUpload = (e) => {
-    const file = e.target.files[0];
-    setState((prevState) => {
-      return {
-        ...prevState,
-        selectedFile: {
-          name: file.name,
-          file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
-        }, //URL.createObjectURL(formData.get("myFile"))
-        fileUploaded: true,
-      };
-    });
-  };
+  useEffect(()=>{
+
+
+  },[props.ticket])
+
+  // const onFileUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   setState((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       selectedFile: {
+  //         name: file.name,
+  //         file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
+  //       }, //URL.createObjectURL(formData.get("myFile"))
+  //       fileUploaded: true,
+  //     };
+  //   });
+  // };
 
   return (
     <>
@@ -243,14 +258,14 @@ const EditTicket = (props) => {
                   type="text"
                   value={status}
                   as="select"
-                  name="urgencyLevel"
+                  name="status"
                   onChange={handleChange}
                   disabled={true}
                 >
                   <>
                     <option value={"Open"}>Open</option>
                     <option value={"Working on it"}>Working on it</option>
-                    <option value={"Done"}>Done</option>
+                    <option value={"Close"}>Close</option>
                   </>
                 </Form.Control>
               </Form.Group>
@@ -267,10 +282,9 @@ const EditTicket = (props) => {
                 <Form.Label>
                   <strong>Close Date</strong>
                 </Form.Label>
-
                 <Form.Control
                   value={
-                    displayDate(open_date) > displayDate(close_date)
+                    open_date > close_date
                       ? ""
                       : displayDate(close_date)
                   }
@@ -365,15 +379,15 @@ const EditTicket = (props) => {
             <div className={styles["col-sm-2"]}>
               <Button
                 onClick={() => {
-                  if (statusChanged)
+                  if (props.ticket.status==="Open" && status==="Working on it")
                     props.updateTicketAttr(
                       props.ticket,
                       props.pos,
                       ["status"],
                       [status]
                     );
+                  reset()
                   props.handleClose();
-                  reset();
                 }}
                 disabled={savingForm}
                 color="grey-modal"
@@ -383,7 +397,7 @@ const EditTicket = (props) => {
               </Button>
             </div>
             <div className={styles["col-sm-10"]}>
-              {authCtx.user.role === "admin" && (
+              {authCtx.user.role === "admin" && status!=="Close" && (
                 <>
                   {!savingForm ? (
                     <Button
@@ -404,7 +418,6 @@ const EditTicket = (props) => {
                         as="span"
                         animation="border"
                         size="sm"
-                        role="status"
                         aria-hidden="true"
                       />
                       <span> Saving...</span>
@@ -416,7 +429,6 @@ const EditTicket = (props) => {
                     btn_color="green"
                     header="Close Ticket"
                     handle={handleCloseTicket}
-                    _id={props.ticket._id}
                   >
                     <Form.Label>
                       <strong>
@@ -439,7 +451,7 @@ const EditTicket = (props) => {
         <Form.Group>
           <Form.Label>
             <h4>
-              <strong>The order has been sent </strong>
+              <strong>The ticket has been closed </strong>
             </h4>
           </Form.Label>
         </Form.Group>
