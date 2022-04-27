@@ -7,7 +7,7 @@ import { BiCycling } from "react-icons/bi";
 
 const Dashboard = (props) => {
   return (
-    <div className="row">
+    <div className="row" >
       <div className={`col-md-4 `}>
         <div
           style={{

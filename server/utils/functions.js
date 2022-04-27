@@ -2,6 +2,7 @@ const { ImageModel } = require("../models/imageModal");
 
 exports.organizeTickets = async (tickets) => {
   let [low, medium, high] = [0, 0, 0];
+  ImageModel.find({})
   try {
     let data = await Promise.all(
       tickets.map(async (ticket) => {

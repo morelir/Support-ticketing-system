@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
 import Message from "../../../shared/FormElements/Message";
-import { displayDate, getTimeDuration } from "../../../utils/functions";
+import { displayDate, getTimeDuration,sendEmail } from "../../../utils/functions";
 import axios from "axios";
 import ModalDialog from "../../../shared/Modals/ModalDialog";
 import MessageModal from "../../../shared/Modals/MessageModal";
@@ -50,13 +50,13 @@ const EditTicket = (props) => {
     setState,
   ] = useState(initialState);
 
-  const [toSend, setToSend] = useState({
-    from_name: "Ticketing System",
-    to_email: props.client ? props.client.email : "",
-    message: "",
-    to_name: "",
-    reply_to: "",
-  });
+  // const [toSend, setToSend] = useState({
+  //   from_name: "Ticketing System",
+  //   to_email: props.client ? props.client.email : "",
+  //   message: "",
+  //   to_name: "",
+  //   reply_to: "",
+  // });
 
   const config = {
     headers: { "x-api-key": authCtx.user.token },
@@ -113,10 +113,10 @@ const EditTicket = (props) => {
         ["status", "close_date"],
         ["Close", closeDate]
       );
-      setState((prev)=>{return {...prev,status:"Close",close_date:closeDate}})
-      await sendEmail(`
-      The ticket you opened at ${displayDate(open_date)} had been closed.`);
+      await sendEmail(props.client.email,`
+      The ticket you opened at ${displayDate(closeDate)} had been closed.`);
       console.log(Date.now()-date)
+      setState((prev)=>{return {...prev,status:"Close",close_date:closeDate}})
       handleCloseDialog();
       props.handleClose();
       setShowCreatedMessage(true);
@@ -127,19 +127,19 @@ const EditTicket = (props) => {
     
   };
 
-  const sendEmail = async (message) => {
-    try {
-      await send(
-        "service_nufcz9l",
-        "template_dbvv02n",
-        { ...toSend, message: message },
-        "HNGMfPAmoequ8VK_l"
-      );
-    } catch (err) {
-      console.log(err);
-      throw new Error(err.text);
-    }
-  };
+  // const sendEmail = async (message) => {
+  //   try {
+  //     await send(
+  //       "service_nufcz9l",
+  //       "template_dbvv02n",
+  //       { ...toSend, message: message },
+  //       "HNGMfPAmoequ8VK_l"
+  //     );
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw new Error(err.text);
+  //   }
+  // };
 
   useEffect(() => { //change status to Working on it for open ticket when open edit modal.
     const checkStatus = async () => {

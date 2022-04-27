@@ -1,19 +1,52 @@
-export const defaultFilter=(array,userTeam)=>{
+import { send } from "emailjs-com";
+
+const mail  = {
+  from_name: "Ticketing System",
+  to_email: "",
+  message: "",
+  to_name: "",
+  reply_to: "",
+};
+
+export const sendEmail = async (to_email,message) => {
+  try {
+    await send(
+      "service_nufcz9l",
+      "template_dbvv02n",
+      { ...mail,to_email:to_email ,message: message },
+      "HNGMfPAmoequ8VK_l"
+    );
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.text);
+  }
+};
+
+
+export const defaultFilter = (array, userTeam) => {
   return array.filter(
     (item) =>
       item.status !== "Close" &&
-      (item.team === userTeam ||
-        userTeam === "Customer service")
-  )
-}
+      (item.team === userTeam || userTeam === "Customer service")
+  );
+};
 
-export const teamFilter=(array,userTeam)=>{
+export const teamFilter = (array, userTeam) => {
   return array.filter(
-    (item) =>
-      (item.team === userTeam ||
-        userTeam === "Customer service")
-  )
-}
+    (item) => item.team === userTeam || userTeam === "Customer service"
+  );
+};
+
+export const randomString = (length) => {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
 
 export const clientIdHandler = (e, setClient, props) => {
   let value = e.target.value;
@@ -29,7 +62,7 @@ export const clientIdHandler = (e, setClient, props) => {
           ...prevState,
           name: user.name,
           surname: user.surname,
-          phone:user.phoneNumber,
+          phone: user.phoneNumber,
           idIsValid: true,
         };
       });
@@ -86,7 +119,7 @@ export const capitalizeFirstLetter = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-export const firstLetterToLowerCase = (word) => { 
+export const firstLetterToLowerCase = (word) => {
   return word.charAt(0).toLowerCase() + word.slice(1);
 };
 

@@ -1,4 +1,5 @@
 const express = require("express");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 const multer = require("multer");
 const uuid = require("uuid").v4;

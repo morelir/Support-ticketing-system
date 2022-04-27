@@ -17,11 +17,13 @@ const mongoose = require("mongoose");
 
 main().catch((err) => console.log(err));
 
-async function main() {
+ function main() {
   await mongoose.connect(
     "mongodb+srv://supportTicketing:support1234@support-ticketing-syste.10xxd.mongodb.net/Support-ticketing-system?retryWrites=true&w=majority"
   );
   console.log("mongo connected");
 }
+
+
 
 module.exports = mongoose;
