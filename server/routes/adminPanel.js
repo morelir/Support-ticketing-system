@@ -14,7 +14,7 @@ router.get("/clientTickets", authToken, async (req, res) => {
     let tickets = await TicketModel.find({
       clientID: req.query.id,
     }).lean();
-    let [data, low, medium, high] = await organizeTickets(tickets);
+    let [data, low, medium, high] = organizeTickets(tickets);
     res.json({ tickets: data, low: low, medium: medium, high: high });
   } catch (err) {
     console.log(err);

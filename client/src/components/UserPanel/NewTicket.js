@@ -11,6 +11,7 @@ import Image from "react-bootstrap/Image";
 import Message from "../../shared/FormElements/Message";
 import { MdOutlineAddCircle } from "react-icons/md";
 import axios from "axios";
+import CropImage from "./NewTicket/CropImage";
 
 const initialState = {
   title: "",
@@ -55,24 +56,27 @@ const NewTicket = (props) => {
     data.append("file", selectedFile.file, `${ticketID}-${selectedFile.name}`);
     console.log(data);
     try {
-      let response = await axios.post("/UserPanel/AddFile", data, {
+      let response = await axios.post("/UserPanel/NewTicket", data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "x-api-key": authCtx.user.token,
         },
-      });
-      response = await axios.post(
-        "/UserPanel/NewTicket",
-        {
+        params: {
           number: ticketID,
           status: "Open",
           clientID: authCtx.user._id,
           title: title,
           description: description,
           urgencyLevel: urgencyLevel,
+          filePath: `${ticketID}-${selectedFile.name}`,
         },
-        config
+      });
+      props.updateTickets(
+        response.data.tickets,
+        response.data.low,
+        response.data.medium,
+        response.data.high
       );
-      props.updateTickets(response.data.tickets,response.data.low,response.data.medium,response.data.high);
       setSavingForm(false);
     } catch (err) {
       console.log(err);
@@ -105,9 +109,10 @@ const NewTicket = (props) => {
         className={styles.btnNewTicket}
         onClick={handleOpen}
         colorHover="white"
-        style={{fontSize:"1.2rem"}}
+        style={{ fontSize: "1.2rem" }}
       >
-        <strong >New Ticket</strong> <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
+        <strong>New Ticket</strong>{" "}
+        <MdOutlineAddCircle style={{ marginBottom: "5px" }} />
       </Button>
 
       <Modal
@@ -130,7 +135,9 @@ const NewTicket = (props) => {
             <Row className="mb-3" style={{ marginTop: "15px" }}>
               <Form.Group as={Col}>
                 <Form.Label>
-                  <strong>Title <span style={{ color: "orange" }}>*</span></strong>
+                  <strong>
+                    Title <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -143,7 +150,10 @@ const NewTicket = (props) => {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>
-                  <strong>Problem Description <span style={{ color: "orange" }}>*</span></strong>
+                  <strong>
+                    Problem Description{" "}
+                    <span style={{ color: "orange" }}>*</span>
+                  </strong>
                 </Form.Label>
                 <Form.Control
                   style={{ height: "10em" }}

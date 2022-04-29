@@ -8,6 +8,7 @@ const ticketSchema = new mongoose.Schema({
   title: String,
   description: String,
   urgencyLevel: String,
+  filePath:String,
   open_date: {
     type: Date,
     default: Date.now,
@@ -27,6 +28,7 @@ exports.validNewTicket = (_bodyData) => {
     clientID: Joi.string().min(2).max(99).required(),
     title: Joi.string().min(2).max(1000).required(),
     description: Joi.string().min(2).max(1000).required(),
+    filePath: Joi.string().min(2).max(1000).required(),
     urgencyLevel: Joi.string().valid("Low", "Medium", "High").required(),
   });
   return joiSchema.validate(_bodyData);
