@@ -15,12 +15,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const filePath = file.originalname;
-    image.save().then(() => {
-      cb(null, filePath);
-    });
-    // ImageModel.create({ filePath}).then(() => {
-    //   cb(null, filePath);
-    // });
+    cb(null, filePath);
   },
 });
 

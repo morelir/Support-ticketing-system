@@ -21,14 +21,20 @@ const initialState = {
     name: "",
     file: "",
   },
+  cropFile: {
+    name: "",
+    file: "",
+  },
 };
 
 const NewTicket = (props) => {
   const authCtx = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [savingForm, setSavingForm] = useState(false);
-  const [{ title, description, urgencyLevel, selectedFile }, setState] =
-    useState(initialState);
+  const [
+    { title, description, urgencyLevel, selectedFile, cropFile },
+    setState,
+  ] = useState(initialState);
 
   const config = {
     headers: { "x-api-key": authCtx.user.token },
@@ -50,10 +56,9 @@ const NewTicket = (props) => {
   const submitNewTicket = async (e) => {
     e.preventDefault();
     setSavingForm(true);
-    console.log(config);
     const ticketID = Math.floor(Math.random() * Date.now()).toString();
     let data = new FormData();
-    data.append("file", selectedFile.file, `${ticketID}-${selectedFile.name}`);
+    data.append("file", cropFile.file, `${ticketID}-${cropFile.name}`);
     console.log(data);
     try {
       let response = await axios.post("/UserPanel/NewTicket", data, {
@@ -68,7 +73,7 @@ const NewTicket = (props) => {
           title: title,
           description: description,
           urgencyLevel: urgencyLevel,
-          filePath: `${ticketID}-${selectedFile.name}`,
+          filePath: `${ticketID}-${cropFile.name}`,
         },
       });
       props.updateTickets(
@@ -99,6 +104,23 @@ const NewTicket = (props) => {
           name: file.name,
           file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
         }, //URL.createObjectURL(formData.get("myFile"))
+        cropFile: {
+          name: file.name,
+          file: e.target.files[0],
+        },
+      };
+    });
+  };
+
+  const [preview, setPreview] = React.useState();
+  const onCropSave = ({ file, preview }) => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        cropFile: {
+          name: file.name,
+          file: file,
+        },
       };
     });
   };
@@ -197,9 +219,9 @@ const NewTicket = (props) => {
               </Form.Group>
             </Row>
             <Row className="mb-3">
-              {selectedFile.file !== "" && (
+              {cropFile.file !== "" && (
                 <>
-                  <Image src={URL.createObjectURL(selectedFile.file)} />
+                  <Image src={URL.createObjectURL(cropFile.file)} />
                   <Message style={{ wordWrap: "break-word" }}>
                     {" "}
                     Uploaded the file successfully : {selectedFile.name}{" "}
@@ -243,6 +265,8 @@ const NewTicket = (props) => {
           </Modal.Footer>
         </Form>
       </Modal>
+      <CropImage onSave={onCropSave} selectedFile={selectedFile.file} />
+      {/* <CropImageEasy selectedFile={selectedFile.file}/> */}
     </>
   );
 };

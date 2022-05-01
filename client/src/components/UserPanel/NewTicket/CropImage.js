@@ -8,7 +8,8 @@ export default function CropImage(props) {
   const [crop, setCrop] = React.useState({
     unit: "%",
     width: 80,
-    aspect: 16 / 9,
+    height:80,
+    aspect: 16/9,
   });
 
   const [src, setSrc] = React.useState();
@@ -21,6 +22,7 @@ export default function CropImage(props) {
   const [croppedFile, setCroppedFile] = React.useState();
 
   const imgRef = React.useRef(null);
+
 
   const previewCanvasRef = React.useRef(null);
 
@@ -41,22 +43,18 @@ export default function CropImage(props) {
     if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
       return;
     }
-
-    const image = imgRef.current;
+    const image = imgRef.current.target;
     const canvas = previewCanvasRef.current;
     const crop = completedCrop;
-
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
-
     const ctx = canvas.getContext("2d");
 
     canvas.width = crop.width * PIXEL_RATIO;
     canvas.height = crop.height * PIXEL_RATIO;
-
     ctx.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
     ctx.imageSmoothingEnabled = false;
-
+    
     ctx.drawImage(
       image,
       crop.x * scaleX,
@@ -68,7 +66,7 @@ export default function CropImage(props) {
       crop.width,
       crop.height
     );
-
+    
     canvas.toBlob((blob) => {
       const previewUrl = URL.createObjectURL(blob);
       const newFile = new File([blob], props.selectedFile.name);
@@ -82,9 +80,10 @@ export default function CropImage(props) {
     <>
       <CropDialog
         open={open}
-        onHide={() => setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
+        disabled={!croppedFile}
         onSave={() => {
-          props.onSave({ file: croppedFile, preview });
+          props.onSave({ file: croppedFile, preview:preview })
           setModalOpen(false);
         }}
       >
@@ -92,11 +91,16 @@ export default function CropImage(props) {
           src={src}
           style={{ maxHeight: "550px" }}
           crop={crop}
-          locked
+          // locked
           onChange={(crop, percentCrop) => setCrop(percentCrop)}
-          onComplete={(c) => setCompletedCrop(c)}
-          onImageLoaded={onLoad}
-        />
+          onComplete={(c) => {
+            setCompletedCrop(c);
+          }}
+          // onImageLoaded={onLoad}
+        >
+          <img src={src} onLoad={onLoad} />
+        </ReactCrop>
+        {preview && <image src={preview} />}
       </CropDialog>
 
       <canvas ref={previewCanvasRef} style={{ width: 0, height: 0 }} />
