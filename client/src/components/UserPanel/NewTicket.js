@@ -11,7 +11,7 @@ import Image from "react-bootstrap/Image";
 import Message from "../../shared/FormElements/Message";
 import { MdOutlineAddCircle } from "react-icons/md";
 import axios from "axios";
-import CropImage from "./NewTicket/CropImage";
+import CropImage from "../../shared/FormElements/CropImage";
 
 const initialState = {
   title: "",
@@ -112,7 +112,7 @@ const NewTicket = (props) => {
     });
   };
 
-  const [preview, setPreview] = React.useState();
+
   const onCropSave = ({ file, preview }) => {
     setState((prevState) => {
       return {
@@ -266,7 +266,6 @@ const NewTicket = (props) => {
         </Form>
       </Modal>
       <CropImage onSave={onCropSave} selectedFile={selectedFile.file} />
-      {/* <CropImageEasy selectedFile={selectedFile.file}/> */}
     </>
   );
 };

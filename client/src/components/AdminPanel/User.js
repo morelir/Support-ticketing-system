@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "./User.module.css";
-import {capitalizeFirstLetter} from "../../utils/functions";
-
+import { capitalizeFirstLetter } from "../../utils/functions";
+import Image from "react-bootstrap/Image";
 
 const User = (props) => {
   const evenPos = (pos) => pos % 2 == 0;
@@ -18,7 +18,7 @@ const User = (props) => {
       pathname: "/UserPanel",
       state: {
         // location state
-        user:props.user
+        user: props.user,
       },
     });
   };
@@ -29,15 +29,25 @@ const User = (props) => {
           evenPos(props.pos) ? styles["user-even-pos"] : styles["user-odd-pos"]
         }
         onClick={handleOpen}
+        style={{ position: "relative" }}
       >
-        <td><strong>{capitalizeFirstLetter(props.user.name)}</strong></td>
+        <td>{props.pos}</td>
+        <td >
+          <Image className={styles.profile} src={props.user.filePath} />
+          <strong>{capitalizeFirstLetter(props.user.name)}</strong>
+        </td>
+        <td>{props.user.email}</td>
 
         <td>
-          <strong>{props.user.openTickets}</strong>
+          {capitalizeFirstLetter(props.user.role)}
         </td>
 
-        <td>
-          <strong>{props.user.generalTickets}</strong>
+        <td style={{textAlign: "center"}}>
+          {props.user.openTickets}
+        </td>
+
+        <td style={{textAlign: "center"}}>
+          {props.user.generalTickets}
         </td>
       </tr>
 

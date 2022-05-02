@@ -7,8 +7,10 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
+import Image from "react-bootstrap/Image";
 import Message from "../../shared/FormElements/Message";
 import { MdOutlineAddCircle } from "react-icons/md";
+import CropImage from "../../shared/FormElements/CropImage";
 import axios from "axios";
 
 const initialState = {
@@ -17,14 +19,24 @@ const initialState = {
   pass: "",
   confPass: "",
   formIsValid: false,
+  selectedFile: {
+    name: "",
+    file: "",
+  },
+  cropFile: {
+    name: "",
+    file: "",
+  },
 };
 
 const NewClient = (props) => {
   const authCtx = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [savingForm, setSavingForm] = useState(false);
-  const [{ name, email, pass, confPass, formIsValid }, setState] =
-    useState(initialState);
+  const [
+    { name, email, pass, confPass, formIsValid, selectedFile, cropFile },
+    setState,
+  ] = useState(initialState);
 
   const config = {
     headers: { "x-api-key": authCtx.user.token },
@@ -45,16 +57,23 @@ const NewClient = (props) => {
   const submit = async (e) => {
     e.preventDefault();
     setSavingForm(true);
+    const profileID = Math.floor(Math.random() * Date.now()).toString();
+    let data = new FormData();
+    data.append("file", cropFile.file, `${profileID}-${cropFile.name}`);
+    console.log(profileID);
     try {
-      let response = await axios.post(
-        "/AdminPanel/newClient",
-        {
+      let response = await axios.post("/AdminPanel/newClient", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-api-key": authCtx.user.token,
+        },
+        params: {
           name: name,
           email: email,
           pass: pass,
+          filePath: `${profileID}-${cropFile.name}`,
         },
-        config
-      );
+      });
       props.updateClients(response.data.users);
     } catch (err) {
       console.log(err.response.data.msg);
@@ -74,7 +93,8 @@ const NewClient = (props) => {
             email.length > 2 &&
             pass.length > 3 &&
             confPass.length > 3 &&
-            pass === confPass,
+            pass === confPass &&
+            cropFile.file !== "",
         };
       });
     }, 250);
@@ -82,7 +102,36 @@ const NewClient = (props) => {
       console.log("Clean-Up Timeout");
       clearTimeout(identifier);
     };
-  }, [name, email, pass, confPass]);
+  }, [name, email, pass, confPass,cropFile]);
+
+  const onFileUpload = (e) => {
+    const file = e.target.files[0];
+    setState((prevState) => {
+      return {
+        ...prevState,
+        selectedFile: {
+          name: file.name,
+          file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
+        }, //URL.createObjectURL(formData.get("myFile"))
+        cropFile: {
+          name: file.name,
+          file: e.target.files[0],
+        },
+      };
+    });
+  };
+
+  const onCropSave = ({ file, preview }) => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        cropFile: {
+          name: file.name,
+          file: file,
+        },
+      };
+    });
+  };
 
   const handleChange = (e) => {
     setState((prevState) => {
@@ -179,6 +228,30 @@ const NewClient = (props) => {
                 />
               </Form.Group>
             </Row>
+            <Row>
+              <Form.Group controlId="formFile" className="mb-3" as={Col}>
+                <Form.Label>
+                  <strong>Upload Profile Picture </strong>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  accept=".png,.jpg,.jpeg"
+                  name="file"
+                  onChange={onFileUpload}
+                />
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              {cropFile.file !== "" && (
+                <>
+                  <Image src={URL.createObjectURL(cropFile.file)} />
+                  <Message style={{ wordWrap: "break-word" }}>
+                    {" "}
+                    Uploaded the file successfully : {selectedFile.name}{" "}
+                  </Message>
+                </>
+              )}
+            </Row>
           </Modal.Body>
           <Modal.Footer className={styles["modal-footer"]}>
             <Button
@@ -211,6 +284,7 @@ const NewClient = (props) => {
           </Modal.Footer>
         </Form>
       </Modal>
+      <CropImage onSave={onCropSave} selectedFile={selectedFile.file} />
     </>
   );
 };

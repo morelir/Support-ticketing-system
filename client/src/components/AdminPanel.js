@@ -18,7 +18,7 @@ const AdminPanel = () => {
   };
 
   const getData = async () => {
-    let time=Date.now()
+    let time = Date.now();
     try {
       let response = await Axios.get("AdminPanel/users", config);
       setUsers(response.data.users);
@@ -27,7 +27,7 @@ const AdminPanel = () => {
       console.log("err");
       console.log(err.response);
     }
-    console.log(Date.now()-time)
+    console.log(Date.now() - time);
   };
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const AdminPanel = () => {
                       style={{ fontSize: "25px" }}
                     />
                   </a> */}
-                    <NewClient updateClients={updateClients}/>
+                    <NewClient updateClients={updateClients} />
                   </div>
                 )}
               </div>
@@ -78,9 +78,12 @@ const AdminPanel = () => {
             /> */}
               <thead>
                 <tr>
-                  <th>Client Name</th>
-                  <th>Open Tickets Number</th>
-                  <th>General Tickets Number</th>
+                  <th>#</th>
+                  <th style={{ textAlign: "left" }}>Client Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th style={{textAlign: "center"}}>Open Tickets Number</th>
+                  <th style={{textAlign: "center"}}>General Tickets Number</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,9 +96,7 @@ const AdminPanel = () => {
                     </tr>
                   ) : (
                     users.map((user, pos) => {
-                      return (
-                        <User user={user} pos={pos} key={user._id} />
-                      );
+                      return <User user={user} pos={pos} key={user._id} />;
                     })
                   )
                 ) : (

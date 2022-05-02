@@ -1,108 +1,59 @@
 .user-even-pos {
-    --bs-table-accent-bg: none;
-    background-color: #f7f7f7;
-    /* background-color:rgba(0, 0, 0, .05); */
-  }
-  
-  .user-even-pos:active,
-  .user-even-pos:hover {
-    --bs-table-accent-bg: none;
-    background-color: #ddd;
-    cursor: pointer;
-    /* background-color:rgba(0, 0, 0, .05); */
-  }
-  
-  .user-odd-pos {
-    --bs-table-accent-bg: none;
-    background-color: rgb(255, 255, 255);
-  }
-  
-  .user-odd-pos:active,
-  .user-odd-pos:hover {
-    --bs-table-accent-bg: none;
-    background-color: #ddd;
-    cursor: pointer;
-  }
-  
-  td.urgencyLevel-Low {
-    color: #00aa2b;
-  }
-  td.urgencyLevel-Medium {
-    color: #0269ca;
-  }
-  td.urgencyLevel-High {
-    color: #cc2b03;
-  }
-  
-  .ticket-description {
-    text-align: left;
-    content: "sdsd";
-    padding-left: 5px;
-  }
-  .ticket-description::before {
-    content: "";
-    margin-left: 20px;
-  }
+  --bs-table-accent-bg: none;
+  /* background-color:#7a91aa */
+  /* background-color:rgba(0, 0, 0, .05); */
+}
 
+.user-even-pos:active,
+.user-even-pos:hover {
+  --bs-table-accent-bg: none;
+  background-color: #ddd;
+  cursor: pointer;
+}
 
+.user-odd-pos {
+  --bs-table-accent-bg: none;
+  /* background-color: #2C3845; */
+}
 
+.user-odd-pos:active,
+.user-odd-pos:hover {
+  --bs-table-accent-bg: none;
+  background-color: #ddd;
+  cursor: pointer;
+}
 
-  /*  */
+td.urgencyLevel-Low {
+  color: #00aa2b;
+}
+td.urgencyLevel-Medium {
+  color: #0269ca;
+}
+td.urgencyLevel-High {
+  color: #cc2b03;
+}
 
-  .subLeft_container {
-    padding-bottom: 8px;
-    width: 40%;
-    text-align: center;
-  }
-  
-  .btnNewTicket {
-    background-color: #509ad6;
-    float:right
-  }
-  
-  .modal {
-    color: #444;
-  }
-  
-  .modal-dialog {
-    max-width: 2000px;
-  }
-  
-  .modal-content {
-    /* border-radius: 40px; */
-    border: 8px solid #212529;
-    border-radius: 20px;
-    text-align: center;
-    background-color: #f7f7f7;
-  }
-  
-  .modal-header {
-    color: white;
-    background: #212529;
-    
-    display: block;
-    text-align: center;
-    border: 0;
-    
-    margin-bottom: "100px";
-  }
-  
-  .modal-body {
-    padding: 0 0.85rem;
-    font-size: 1.3rem;
-    
-  }
-  
-  .modal-footer {
-    
-    font-size: 1.1rem;
-  }
-  
-  .form-group-sub-title {
-    text-align: center;
-    background-color: #f7f7f7;
-    border: 8px none #212529;
-    border-radius: 20px;
-  }
-  
-  
+.ticket-description {
+  text-align: left;
+  content: "sdsd";
+  padding-left: 5px;
+}
+.ticket-description::before {
+  content: "";
+  margin-left: 20px;
+}
+
+.btnNewTicket {
+  background-color: #509ad6;
+  float: right;
+}
+
+.profile {
+  /* position: absolute;
+    top: 2px;
+    left: 30px; */
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  margin-right:15px;
+}

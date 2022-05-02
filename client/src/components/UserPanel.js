@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
+import Image from "react-bootstrap/Image";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
@@ -108,7 +109,7 @@ const UserPanel = (props) => {
         else return 0;
       });
     }
-    setTickets((prev)=>newTickets);
+    setTickets((prev) => newTickets);
   };
 
   return (
@@ -137,11 +138,17 @@ const UserPanel = (props) => {
                   <h2>
                     <strong>Ticket List</strong>
                     {authCtx.user.role === "admin" && (
-                      <strong>
-                        {" "}
-                        -{" "}
-                        {capitalizeFirstLetter(props.location.state.user.name)}
-                      </strong>
+                      <>
+                        <strong>
+                          {" "}
+                          -{" "}
+                          {capitalizeFirstLetter(
+                            props.location.state.user.name
+                          )}
+                          {" "}
+                        </strong>
+                        {/* <Image className={styles.profile} src={client.filePath} /> */}
+                      </>
                     )}
                   </h2>
                 </div>
@@ -176,8 +183,7 @@ const UserPanel = (props) => {
                   <th>Status</th>
                   <th>Open Date</th>
                   <th>Urgency Level</th>
-                  <th>Handling Duration</th>
-                  <th>Actions</th>
+                  <th>Handling Duration</th> 
                 </tr>
               </thead>
               <tbody>

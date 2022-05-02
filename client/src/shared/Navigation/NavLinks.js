@@ -1,15 +1,14 @@
 import React, { useContext } from "react";
-import { NavLink, Link} from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import { capitalizeFirstLetter } from "../../utils/functions";
+import Image from "react-bootstrap/Image";
 
 import "./NavLinks.css";
 
 const NavLinks = (props) => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
-  
-
   const LogoutHandler = () => {
     authCtx.logout();
   };
@@ -19,10 +18,11 @@ const NavLinks = (props) => {
       {isLoggedIn && (
         <>
           <li>
-            <div style={{ color: "#88989b" }}>
-              <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center",position:"relative" }} >
+              <Image className="profile" src={authCtx.user.filePath} />
+              <span style={{ color: "#88989b" }}>
                 Hello, {capitalizeFirstLetter(authCtx.user.name)}
-              </div>
+              </span>
             </div>
           </li>
 

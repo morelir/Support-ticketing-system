@@ -38,7 +38,6 @@ const Ticket = (props) => {
           <strong>{props.ticket.urgencyLevel}</strong>
         </td>
         <td>{getTimeDuration(props.ticket.open_date)}</td>
-        <td></td>
       </tr>
       <tr
         className={
