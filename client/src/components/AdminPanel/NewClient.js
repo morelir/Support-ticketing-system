@@ -113,15 +113,16 @@ const NewClient = (props) => {
           name: file.name,
           file: e.target.files[0], //or URL.createObjectURL(e.target.files[0])
         }, //URL.createObjectURL(formData.get("myFile"))
-        cropFile: {
-          name: file.name,
-          file: e.target.files[0],
-        },
+        // cropFile: {
+        //   name: file.name,
+        //   file: e.target.files[0],
+        // },
       };
     });
   };
 
   const onCropSave = ({ file, preview }) => {
+    console.log(file)
     setState((prevState) => {
       return {
         ...prevState,

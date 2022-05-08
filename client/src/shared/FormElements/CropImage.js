@@ -2,17 +2,19 @@ import React from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import ModDialog from "../Modals/ModDialog";
+import Spinner from "react-bootstrap/Spinner";
+import { height } from "@mui/system";
 
 const PIXEL_RATIO = 4;
 export default function CropImage(props) {
   const [crop, setCrop] = React.useState({
     unit: "%",
     width: 80,
-    height:80,
-    aspect: 16/9,
+    // height: 80,
+    aspect: 16 / 9,
   });
 
-  const [src, setSrc] = React.useState();
+  const [src, setSrc] = React.useState("");
 
   const [completedCrop, setCompletedCrop] = React.useState();
 
@@ -22,7 +24,6 @@ export default function CropImage(props) {
   const [croppedFile, setCroppedFile] = React.useState();
 
   const imgRef = React.useRef(null);
-
 
   const previewCanvasRef = React.useRef(null);
 
@@ -54,7 +55,6 @@ export default function CropImage(props) {
     canvas.height = crop.height * PIXEL_RATIO;
     ctx.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
     ctx.imageSmoothingEnabled = false;
-    
     ctx.drawImage(
       image,
       crop.x * scaleX,
@@ -66,11 +66,11 @@ export default function CropImage(props) {
       crop.width,
       crop.height
     );
-    
+
     canvas.toBlob((blob) => {
       const previewUrl = URL.createObjectURL(blob);
       const newFile = new File([blob], props.selectedFile.name);
-
+      console.log(props.selectedFile.name);
       setPreview(previewUrl);
       setCroppedFile(newFile);
     }, "image/jpg");
@@ -80,11 +80,19 @@ export default function CropImage(props) {
     <>
       <ModDialog
         open={open}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          setSrc();
+          setCroppedFile();
+          setCrop((prev)=>{return {...prev,height:0}})
+        }}
         disabled={!croppedFile}
         onSave={() => {
-          props.onSave({ file: croppedFile, preview:preview })
+          props.onSave({ file: croppedFile, preview: preview });
           setModalOpen(false);
+          setSrc();
+          setCroppedFile();
+          setCrop((prev)=>{return {...prev,height:0}})
         }}
         title="File Crop Preview"
       >
@@ -102,6 +110,17 @@ export default function CropImage(props) {
           <img src={src} onLoad={onLoad} />
         </ReactCrop>
         {preview && <image src={preview} />}
+        {!src && (
+          <>
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              aria-hidden="true"
+            />
+            <span> Loading...</span>
+          </>
+        )}
       </ModDialog>
 
       <canvas ref={previewCanvasRef} style={{ width: 0, height: 0 }} />

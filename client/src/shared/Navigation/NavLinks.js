@@ -8,6 +8,8 @@ import "./NavLinks.css";
 
 const NavLinks = (props) => {
   const authCtx = useContext(AuthContext);
+  if(authCtx.user)
+    console.log(authCtx.user.filePath)
   const isLoggedIn = authCtx.isLoggedIn;
   const LogoutHandler = () => {
     authCtx.logout();
