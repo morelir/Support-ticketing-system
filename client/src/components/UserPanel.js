@@ -5,25 +5,32 @@ import { useHistory } from "react-router-dom";
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
-import Image from "react-bootstrap/Image";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
+import { BsFilter } from "react-icons/bs";
 import {
   capitalizeFirstLetter,
   firstLetterToLowerCase,
 } from "../utils/functions";
+import Filter from "./UserPanel/Filter";
 
 const UserPanel = (props) => {
   const authCtx = useContext(AuthContext);
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
+  const [allTickets, setAllTickets] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [urgency, setUrgency] = useState({});
   const config = {
     headers: { "x-api-key": authCtx.user.token },
   };
   const [client, setClient] = useState({});
+  const [filterOpen, setFilterOpen] = useState(false);
+  const handleFilterOpen = () => {
+    if (!filterOpen) setFilterOpen(true);
+    else setFilterOpen(false);
+  };
 
   const getData = async () => {
     try {
@@ -41,6 +48,7 @@ const UserPanel = (props) => {
         response = await Axios.get("UserPanel/tickets", config);
       }
       console.log(Date.now() - data);
+      setAllTickets(response.data.tickets);
       setTickets(response.data.tickets);
       setUrgency({
         low: response.data.low,
@@ -48,7 +56,7 @@ const UserPanel = (props) => {
         high: response.data.high,
       });
       setIsLoading(false);
-      // setIsOpen(true);
+      setFilterOpen(true);
     } catch (err) {
       console.log("err");
       console.log(err.response);
@@ -61,9 +69,19 @@ const UserPanel = (props) => {
 
   const updateTickets = (tickets, low, medium, high) => {
     setIsLoading(true);
-    setTickets(tickets);
+    setAllTickets(tickets);
     setUrgency({ low: low, medium: medium, high: high });
     setIsLoading(false);
+  };
+
+  const OnTicketsFilter = (tickets) => {
+    setIsLoading(true);
+    setTickets(tickets);
+    setIsLoading(false);
+  };
+
+  const resetTickets = () => {
+    setTickets(allTickets);
   };
 
   const updateTicketAttr = (ticket, index, names, values) => {
@@ -133,6 +151,11 @@ const UserPanel = (props) => {
                   }}
                 />
               )}
+              <BsFilter
+                title="filter"
+                className={styles["filter"]}
+                onClick={handleFilterOpen} 
+              />
               <div className="row">
                 <div className={styles["col-sm-2"]}>
                   <h2>
@@ -144,8 +167,7 @@ const UserPanel = (props) => {
                           -{" "}
                           {capitalizeFirstLetter(
                             props.location.state.user.name
-                          )}
-                          {" "}
+                          )}{" "}
                         </strong>
                         {/* <Image className={styles.profile} src={client.filePath} /> */}
                       </>
@@ -155,38 +177,32 @@ const UserPanel = (props) => {
 
                 {!isLoading && authCtx.user.role !== "admin" && (
                   <div className={styles["col-sm-10"]}>
-                    {/* <a className={styles["btn"]}>
-                    <BsFilterRight
-                      title="faults filter"
-                      onClick={handleOpen}
-                      style={{ fontSize: "25px" }}
-                    />
-                  </a> */}
+                    {/* <a className={styles["btn"]}> */}
 
+                    {/* </a> */}
                     <NewTicket updateTickets={updateTickets} />
                   </div>
                 )}
               </div>
             </div>
-            <table className={`table ${styles.table}`}>
-              {/* <FaultsFilter
-              faults={allFaults}
-              users={users}
-              clients={clients}
-              isOpen={isOpen}
-              updateFaults={updateFaults}
-              resetFaults={resetFaults}
-            /> */}
-              <thead>
+            {/* table */}
+            <table className={` ${styles.table}`}> 
+              <Filter
+                tickets={allTickets}
+                open={filterOpen}
+                update={OnTicketsFilter}
+                reset={resetTickets}
+              />
+              <thead  >
                 <tr>
                   <th>No.</th>
                   <th>Status</th>
                   <th>Open Date</th>
                   <th>Urgency Level</th>
-                  <th>Handling Duration</th> 
+                  <th>Handling Duration</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody >
                 {!isLoading ? (
                   tickets.length === 0 ? (
                     <tr className={styles["ticket-even-pos"]}>
