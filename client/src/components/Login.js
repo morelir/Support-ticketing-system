@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useReducer, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
@@ -11,9 +11,29 @@ import { randomString, sendEmail } from "../utils/functions";
 import ModalDialog from "../shared/Modals/ModalDialog";
 import VerificationModal from "../shared/Modals/VerificationModal";
 
+const emailReducer = (state, action) => {
+  if (action.type === "USER_INPUT") {
+    return { value: action.value, isValid: action.value.includes("@") };
+  }
+  if (action.type === "INPUT_BLUR") {
+    return { value: state.value, isValid: state.value.includes("@") };
+  }
+  return { value: "", isValid: false };
+};
+
+const passwordReducer = (state, action) => {
+  if (action.type === "USER_INPUT") {
+    return { value: action.value, isValid: action.value.length > 2 };
+  }
+  if (action.type === "INPUT_BLUR") {
+    return { value: state.value, isValid: state.value.length > 2 };
+  }
+  return { value: "", isValid: false };
+};
+
 const Login = (props) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [code, setCode] = useState("");
@@ -22,18 +42,36 @@ const Login = (props) => {
   const history = useHistory();
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
+  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+    value: "",
+    isValid: null,
+  });
+
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
+    value: "",
+    isValid: null,
+  });
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      console.log("Checking form validity")
+      setFormIsValid(emailState.isValid && passwordState.isValid)
+    },500)
+  },[emailState.isValid,passwordState.isValid])
+
+  // function validateForm() {
+  //   return emailState.isValid && passwordState.isValid;
+  // }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
     setErrors("");
     Axios.post("/Login", {
-      email: email,
-      pass: password,
+      email: emailState.value,
+      pass: passwordState.value,
     })
       .then(async (response) => {
         // setUser(response.data);
@@ -41,7 +79,7 @@ const Login = (props) => {
         // await sendEmail(email, `Verification Code : ${code}`);
         // setVerificationCode(code);
         // setShowVerification(true);
-      
+
         const expirationTime = new Date(new Date().getTime() + 3600 * 1000);
         const objUserAndToken = {
           ...response.data.user,
@@ -53,12 +91,11 @@ const Login = (props) => {
         else if (response.data.user.role === "admin")
           history.replace("/AdminPanel");
         else history.replace("/");
-
-        setLoading(false);
       })
       .catch((err) => {
         setErrors(err.response.data.msg);
       });
+    setLoading(false);
   };
 
   const handleVerifyCode = () => {
@@ -89,29 +126,54 @@ const Login = (props) => {
         <div className={styles.login}>
           <h1 className={styles.login_header}>Login</h1>
           <Form onSubmit={handleSubmit}>
-            <Form.Group size="lg" controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                autoFocus
+            <Form.Group
+              className={`${styles.control} ${
+                emailState.isValid===false && styles.invalid
+              }`}
+              size="lg"
+              controlId="email"
+            >
+              <label>Email</label>
+              <input
+                // autoFocus
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={emailState.value}
+                onChange={(e) =>
+                  dispatchEmail({ type: "USER_INPUT", value: e.target.value })
+                }
+                onBlur={() => {
+                  dispatchEmail({ type: "INPUT_BLUR" });
+                }}
               />
             </Form.Group>
-            <Form.Group size="lg" controlId="password">
+            <Form.Group
+              className={`${styles.control} ${
+                passwordState.isValid===false && styles.invalid 
+              }`}
+              size="lg"
+              controlId="password"
+            >
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={passwordState.value}
+                onChange={(e) =>
+                  dispatchPassword({
+                    type: "USER_INPUT",
+                    value: e.target.value,
+                  })
+                }
+                onBlur={() => {
+                  dispatchPassword({ type: "INPUT_BLUR" });
+                }}
               />
             </Form.Group>
             {!loading ? (
-              <Button size="lg" type="submit" disabled={!validateForm()}>
+              <Button size="lg" type="submit" disabled={!formIsValid}>
                 Login
               </Button>
             ) : (
-              <Button size="lg" >
+              <Button size="lg">
                 <Spinner
                   as="span"
                   animation="border"
@@ -139,7 +201,7 @@ const Login = (props) => {
           <Form.Group>
             <Form.Label>
               For added security, we need to verify your email address. We've
-              send a verification code to <strong>{email}</strong>.
+              send a verification code to <strong>{emailState.value}</strong>.
             </Form.Label>
             <Form.Control
               placeholder="Verification code"

@@ -1,7 +1,7 @@
 @media all and (min-width: 480px) {
   .login {
     padding-bottom: 8px;
-    border: 8px solid #212529 ;
+    border: 8px solid #212529;
     border-radius: 20px;
     background-color: #f7f7f7;
     width: 800px;
@@ -16,9 +16,8 @@
   }
 
   .login form div {
-   margin-bottom: 20px;
+    margin-bottom: 20px;
   }
-
 
   .login_header {
     border: 5px solid #212529;
@@ -30,4 +29,45 @@
     color: white;
     font-weight: 600;
   }
+}
+
+.control {
+  margin: 1rem 0;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.control label,
+.control input {
+  display: block;
+}
+
+.control label {
+  font-weight: bold;
+  flex: 1;
+  color: #464646;
+  margin-bottom: 0.5rem;
+}
+
+.control input {
+  flex: 3;
+  font: inherit;
+  padding: 0.35rem 0.35rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.control input:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.control.invalid input {
+  border-color: #f69494;
+  background: #fbdada;
+  box-shadow: 0 0 0 0.25rem #ff9f9f; 
 }
