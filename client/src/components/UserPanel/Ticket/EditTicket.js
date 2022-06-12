@@ -9,7 +9,11 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import Image from "react-bootstrap/Image";
 import Message from "../../../shared/FormElements/Message";
-import { displayDate, getTimeDuration,sendEmail } from "../../../utils/functions";
+import {
+  displayDate,
+  getTimeDuration,
+  sendEmail,
+} from "../../../utils/functions";
 import axios from "axios";
 import ModalDialog from "../../../shared/Modals/ModalDialog";
 import MessageModal from "../../../shared/Modals/MessageModal";
@@ -23,7 +27,7 @@ const EditTicket = (props) => {
     description: props.ticket.description,
     urgencyLevel: props.ticket.urgencyLevel,
     open_date: props.ticket.open_date,
-    close_date: props.ticket.close_date,
+    close_date: props.ticket.close_date === null ? "" : props.ticket.close_date,
     selectedFile: {
       name: "",
       file: props.ticket.filePath,
@@ -63,9 +67,9 @@ const EditTicket = (props) => {
   };
 
   const reset = () => {
-    console.log(initialState)
+    console.log(initialState);
     setState({ ...initialState });
-  }
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -97,7 +101,7 @@ const EditTicket = (props) => {
     setSavingStatus(true);
     let closeDate = new Date();
     try {
-      let date=Date.now();
+      let date = Date.now();
       await axios.patch(
         `/UserPanel/UpdateTicket`,
         {
@@ -113,10 +117,15 @@ const EditTicket = (props) => {
         ["status", "close_date"],
         ["Close", closeDate]
       );
-      await sendEmail(props.client.email,`
-      The ticket you opened at ${displayDate(closeDate)} had been closed.`);
-      console.log(Date.now()-date)
-      setState((prev)=>{return {...prev,status:"Close",close_date:closeDate}})
+      await sendEmail(
+        props.client.email,
+        `
+      The ticket you opened at ${displayDate(closeDate)} had been closed.`
+      );
+      console.log(Date.now() - date);
+      setState((prev) => {
+        return { ...prev, status: "Close", close_date: closeDate };
+      });
       handleCloseDialog();
       props.handleClose();
       setShowCreatedMessage(true);
@@ -124,7 +133,6 @@ const EditTicket = (props) => {
       console.log(err);
     }
     setSavingStatus(false);
-    
   };
 
   // const sendEmail = async (message) => {
@@ -141,15 +149,16 @@ const EditTicket = (props) => {
   //   }
   // };
 
-  useEffect(() => { //change status to Working on it for open ticket when open edit modal.
+  useEffect(() => {
+    //change status to Working on it for open ticket when open edit modal.
     const checkStatus = async () => {
       if (
         props.show === true &&
         authCtx.user.role === "admin" &&
         status === "Open"
       ) {
-        console.log(true)
-        console.log(status)
+        console.log(true);
+        console.log(status);
         setState({
           ...initialState,
           status: "Working on it",
@@ -199,10 +208,7 @@ const EditTicket = (props) => {
     });
   };
 
-  useEffect(()=>{
-
-
-  },[props.ticket])
+  useEffect(() => {}, [props.ticket]);
 
   // const onFileUpload = (e) => {
   //   const file = e.target.files[0];
@@ -217,7 +223,8 @@ const EditTicket = (props) => {
   //     };
   //   });
   // };
-
+  console.log(open_date);
+  console.log(close_date);
   return (
     <>
       <Modal
@@ -283,11 +290,7 @@ const EditTicket = (props) => {
                   <strong>Close Date</strong>
                 </Form.Label>
                 <Form.Control
-                  value={
-                    open_date > close_date
-                      ? ""
-                      : displayDate(close_date)
-                  }
+                  value={open_date > close_date ? "" : displayDate(close_date)}
                   disabled
                 />
               </Form.Group>
@@ -379,14 +382,17 @@ const EditTicket = (props) => {
             <div className={styles["col-sm-2"]}>
               <Button
                 onClick={() => {
-                  if (props.ticket.status==="Open" && status==="Working on it")
+                  if (
+                    props.ticket.status === "Open" &&
+                    status === "Working on it"
+                  )
                     props.updateTicketAttr(
                       props.ticket,
                       props.pos,
                       ["status"],
                       [status]
                     );
-                  reset()
+                  reset();
                   props.handleClose();
                 }}
                 disabled={savingForm}
@@ -397,7 +403,7 @@ const EditTicket = (props) => {
               </Button>
             </div>
             <div className={styles["col-sm-10"]}>
-              {authCtx.user.role === "admin" && status!=="Close" && (
+              {authCtx.user.role === "admin" && status !== "Close" && (
                 <>
                   {!savingForm ? (
                     <Button

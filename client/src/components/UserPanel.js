@@ -70,6 +70,7 @@ const UserPanel = (props) => {
   const updateTickets = (tickets, low, medium, high) => {
     setIsLoading(true);
     setAllTickets(tickets);
+    setTickets(tickets);
     setUrgency({ low: low, medium: medium, high: high });
     setIsLoading(false);
   };
@@ -207,7 +208,7 @@ const UserPanel = (props) => {
                   tickets.length === 0 ? (
                     <tr className={styles["ticket-even-pos"]}>
                       <td colSpan="9">
-                        <strong>Not Found</strong>
+                        <strong>No tickets found </strong>
                       </td>
                     </tr>
                   ) : (

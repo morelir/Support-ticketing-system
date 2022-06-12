@@ -12,6 +12,7 @@ import Message from "../../shared/FormElements/Message";
 import { MdOutlineAddCircle } from "react-icons/md";
 import CropImage from "../../shared/FormElements/CropImage";
 import axios from "axios";
+import {sendEmail} from "../../utils/functions"
 
 const initialState = {
   name: "",
@@ -74,6 +75,16 @@ const NewClient = (props) => {
           filePath: `${profileID}-${cropFile.name}`,
         },
       });
+      await sendEmail(
+        email,
+        `
+      A new user has been created to you in the Support Ticketing System.\n
+      link to the website : http://localhost:3000/\n
+      Login Details:\n
+      \tEmail: ${email}\n
+      \tPassword: ${pass}\n
+      `
+      );
       props.updateClients(response.data.users);
     } catch (err) {
       console.log(err.response.data.msg);

@@ -76,7 +76,7 @@ const Login = (props) => {
       .then(async (response) => {
         // setUser(response.data);
         // let code = randomString(5);
-        // await sendEmail(email, `Verification Code : ${code}`);
+        // await sendEmail(emailState.value, `Verification Code : ${code}`);
         // setVerificationCode(code);
         // setShowVerification(true);
 

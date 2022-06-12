@@ -37,6 +37,7 @@ router.post(
         clientID: req.query.clientID,
       }).lean();
       let [data, low, medium, high] = organizeTickets(tickets);
+      console.log(data);
       res.json({ tickets: data, low: low, medium: medium, high: high });
     } catch (err) {
       res.status(401).json({ msg: "Error" });
