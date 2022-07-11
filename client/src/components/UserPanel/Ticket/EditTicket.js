@@ -223,8 +223,7 @@ const EditTicket = (props) => {
   //     };
   //   });
   // };
-  console.log(open_date);
-  console.log(close_date);
+
   return (
     <>
       <Modal

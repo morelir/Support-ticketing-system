@@ -54,12 +54,12 @@ const Login = (props) => {
     isValid: null,
   });
 
-  useEffect(()=>{
-    setTimeout(()=>{
-      console.log("Checking form validity")
-      setFormIsValid(emailState.isValid && passwordState.isValid)
-    },500)
-  },[emailState.isValid,passwordState.isValid])
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("Checking form validity");
+      setFormIsValid(emailState.isValid && passwordState.isValid);
+    }, 500);
+  }, [emailState.isValid, passwordState.isValid]);
 
   // function validateForm() {
   //   return emailState.isValid && passwordState.isValid;
@@ -118,101 +118,97 @@ const Login = (props) => {
     }
   };
 
-  if (authCtx.isLoggedIn) {
-    return <h1 style={{ color: "white" }}>This page is not available</h1>;
-  } else {
-    return (
-      <div>
-        <div className={styles.login}>
-          <h1 className={styles.login_header}>Login</h1>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group
-              className={`${styles.control} ${
-                emailState.isValid===false && styles.invalid
-              }`}
-              size="lg"
-              controlId="email"
-            >
-              <label>Email</label>
-              <input
-                // autoFocus
-                type="email"
-                value={emailState.value}
-                onChange={(e) =>
-                  dispatchEmail({ type: "USER_INPUT", value: e.target.value })
-                }
-                onBlur={() => {
-                  dispatchEmail({ type: "INPUT_BLUR" });
-                }}
-              />
-            </Form.Group>
-            <Form.Group
-              className={`${styles.control} ${
-                passwordState.isValid===false && styles.invalid 
-              }`}
-              size="lg"
-              controlId="password"
-            >
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={passwordState.value}
-                onChange={(e) =>
-                  dispatchPassword({
-                    type: "USER_INPUT",
-                    value: e.target.value,
-                  })
-                }
-                onBlur={() => {
-                  dispatchPassword({ type: "INPUT_BLUR" });
-                }}
-              />
-            </Form.Group>
-            {!loading ? (
-              <Button size="lg" type="submit" disabled={!formIsValid}>
-                Login
-              </Button>
-            ) : (
-              <Button size="lg">
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-                Login...
-              </Button>
-            )}
-            <Message error style={{ marginTop: "20px" }}>
-              {errors}
-            </Message>
-          </Form>
-        </div>
-        <VerificationModal
-          show={showVerification}
-          setShowVerification={setShowVerification}
-          handle={handleVerifyCode}
-          btn_name="Close Ticket"
-          btn_color="green"
-          header="Verification Code"
-          input="Verification code"
-        >
-          <Form.Group>
-            <Form.Label>
-              For added security, we need to verify your email address. We've
-              send a verification code to <strong>{emailState.value}</strong>.
-            </Form.Label>
-            <Form.Control
-              placeholder="Verification code"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
+  return (
+    <div>
+      <div className={styles.login}>
+        <h1 className={styles.login_header}>Login</h1>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group
+            className={`${styles.control} ${
+              emailState.isValid === false && styles.invalid
+            }`}
+            size="lg"
+            controlId="email"
+          >
+            <label>Email</label>
+            <input
+              // autoFocus
+              type="email"
+              value={emailState.value}
+              onChange={(e) =>
+                dispatchEmail({ type: "USER_INPUT", value: e.target.value })
+              }
+              onBlur={() => {
+                dispatchEmail({ type: "INPUT_BLUR" });
+              }}
             />
           </Form.Group>
-        </VerificationModal>
+          <Form.Group
+            className={`${styles.control} ${
+              passwordState.isValid === false && styles.invalid
+            }`}
+            size="lg"
+            controlId="password"
+          >
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              value={passwordState.value}
+              onChange={(e) =>
+                dispatchPassword({
+                  type: "USER_INPUT",
+                  value: e.target.value,
+                })
+              }
+              onBlur={() => {
+                dispatchPassword({ type: "INPUT_BLUR" });
+              }}
+            />
+          </Form.Group>
+          {!loading ? (
+            <Button size="lg" type="submit" disabled={!formIsValid}>
+              Login
+            </Button>
+          ) : (
+            <Button size="lg">
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+              Login...
+            </Button>
+          )}
+          <Message error style={{ marginTop: "20px" }}>
+            {errors}
+          </Message>
+        </Form>
       </div>
-    );
-  }
+      <VerificationModal
+        show={showVerification}
+        setShowVerification={setShowVerification}
+        handle={handleVerifyCode}
+        btn_name="Close Ticket"
+        btn_color="green"
+        header="Verification Code"
+        input="Verification code"
+      >
+        <Form.Group>
+          <Form.Label>
+            For added security, we need to verify your email address. We've send
+            a verification code to <strong>{emailState.value}</strong>.
+          </Form.Label>
+          <Form.Control
+            placeholder="Verification code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+        </Form.Group>
+      </VerificationModal>
+    </div>
+  );
 };
 
 export default Login;

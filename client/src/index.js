@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AuthContextProvider } from "./store/auth-context";
 
+
 ReactDOM.render(
   <React.StrictMode>
     <AuthContextProvider>

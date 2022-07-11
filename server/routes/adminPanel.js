@@ -50,7 +50,6 @@ router.get("/users", authToken, async (req, res) => {
         };
       })
     );
-    console.log(users);
     res.json({ users: users });
   } catch (err) {
     console.log(err);
@@ -69,7 +68,6 @@ router.post(
     }
     try {
       let user = new UserModel(req.query);
-      console.log(user);
       user.pass = await bcrypt.hash(user.pass, 10);
       await user.save(); //שומר את המידע ב db
       let users = await UserModel.find({ role: "regular" }).lean();
@@ -89,7 +87,6 @@ router.post(
           };
         })
       );
-      console.log(users)
       res.json({ users: users });
     } catch (err) {
       res.status(401).json({

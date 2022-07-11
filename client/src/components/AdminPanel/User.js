@@ -15,9 +15,9 @@ const User = (props) => {
   const handleOpen = () => {
     // setShow(true);
     history.push({
-      pathname: "/UserPanel",
+      pathname: `/AdminPanel/${props.user._id}`,
+      // to access state at the new path use props.location.state
       state: {
-        // location state
         user: props.user,
       },
     });
@@ -51,26 +51,6 @@ const User = (props) => {
         </td>
       </tr>
 
-      {/* <Modal
-        show={show}
-        backdrop="static"
-        keyboard={false}
-        className={styles["modal"]}
-        dialogClassName={styles["modal-dialog"]}
-        contentClassName={styles["modal-content"]}
-      >
-        <Modal.Header className={styles["modal-header"]}>
-          <Modal.Title>
-            <h3>
-              <strong>Client Tickets</strong>
-            </h3>
-          </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body className={styles["modal-body"]}>
-            <UserPanel user={props.user}/>
-        </Modal.Body>
-      </Modal> */}
     </>
   );
 };

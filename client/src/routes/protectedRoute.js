@@ -6,7 +6,7 @@ import {
 
 const ProtectedRoute = (props) => {
   if (props.condition) {
-    return <Route exact path={props.path} component={props.component}></Route>;
+    return <Route exact={props.exact} path={props.path} component={props.component}/>;
   }else{
     return <Redirect to="/" />;
   }

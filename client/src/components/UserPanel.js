@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
-import { useHistory } from "react-router-dom";
+import { useHistory,useLocation} from "react-router-dom";
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
-import { IoArrowBackCircleSharp } from "react-icons/io5";
+import { IoArrowBackCircleSharp, IoCompassOutline } from "react-icons/io5";
 import Ticket from "./UserPanel/Ticket";
 import Dashboard from "./UserPanel/Dashboard";
 import { BsFilter } from "react-icons/bs";
@@ -16,6 +16,7 @@ import {
 import Filter from "./UserPanel/Filter";
 
 const UserPanel = (props) => {
+  const location = useLocation();
   const authCtx = useContext(AuthContext);
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +28,7 @@ const UserPanel = (props) => {
   };
   const [client, setClient] = useState({});
   const [filterOpen, setFilterOpen] = useState(false);
+
   const handleFilterOpen = () => {
     if (!filterOpen) setFilterOpen(true);
     else setFilterOpen(false);
@@ -34,19 +36,21 @@ const UserPanel = (props) => {
 
   const getData = async () => {
     try {
+      console.log(location)
       let response;
       let data = Date.now();
-      if (props.location.state) {
-        setClient(props.location.state.user);
-        response = await Axios.get("AdminPanel/clientTickets", {
+      if (location.state) {
+        setClient(location.state.user);
+        response = await Axios.get("/AdminPanel/clientTickets", {
           params: {
-            id: props.location.state.user._id,
+            id: location.state.user._id,
           },
           headers: { "x-api-key": authCtx.user.token },
         });
       } else {
-        response = await Axios.get("UserPanel/tickets", config);
+        response = await Axios.get("/UserPanel/tickets", config);
       }
+      
       console.log(Date.now() - data);
       setAllTickets(response.data.tickets);
       setTickets(response.data.tickets);
@@ -148,7 +152,7 @@ const UserPanel = (props) => {
                 <IoArrowBackCircleSharp
                   className={styles["arrowBack"]}
                   onClick={() => {
-                    history.replace("/AdminPanel");
+                    history.goBack();
                   }}
                 />
               )}
@@ -167,7 +171,7 @@ const UserPanel = (props) => {
                           {" "}
                           -{" "}
                           {capitalizeFirstLetter(
-                            props.location.state.user.name
+                            location.state.user.name
                           )}{" "}
                         </strong>
                         {/* <Image className={styles.profile} src={client.filePath} /> */}
