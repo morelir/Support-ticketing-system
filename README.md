@@ -4,7 +4,7 @@
 
 ## ***About***
 Web application for support ticketing system, where each admin user can registering customers to 
-the system by filling out their details and attach their customer profile picture via form in the admin panel page,
+the system by filling out the customer detail and attach their customer profile picture via form in the admin panel page,
 then the clients can open new tickets in the system by 
 filling out a ticket details and attach a fault picture via form in the client panel, then the tickets will be displayed to admin users in the admin panel page
 and they will take care to treat the tickets.
