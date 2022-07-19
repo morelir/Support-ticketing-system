@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Axios from "axios";
 import AuthContext from "../store/auth-context";
-import { useHistory,useLocation} from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styles from "./UserPanel.module.css";
 import NewTicket from "./UserPanel/NewTicket";
 import Spinner from "react-bootstrap/Spinner";
@@ -36,7 +36,6 @@ const UserPanel = (props) => {
 
   const getData = async () => {
     try {
-      console.log(location)
       let response;
       let data = Date.now();
       if (location.state) {
@@ -50,7 +49,7 @@ const UserPanel = (props) => {
       } else {
         response = await Axios.get("/UserPanel/tickets", config);
       }
-      
+
       console.log(Date.now() - data);
       setAllTickets(response.data.tickets);
       setTickets(response.data.tickets);
@@ -159,7 +158,7 @@ const UserPanel = (props) => {
               <BsFilter
                 title="filter"
                 className={styles["filter"]}
-                onClick={handleFilterOpen} 
+                onClick={handleFilterOpen}
               />
               <div className="row">
                 <div className={styles["col-sm-2"]}>
@@ -169,8 +168,7 @@ const UserPanel = (props) => {
                       <>
                         <strong>
                           {" "}
-                          -{" "}
-                          {capitalizeFirstLetter(
+                          - {capitalizeFirstLetter(
                             location.state.user.name
                           )}{" "}
                         </strong>
@@ -191,14 +189,15 @@ const UserPanel = (props) => {
               </div>
             </div>
             {/* table */}
-            <table className={` ${styles.table}`}> 
+            <table className={` ${styles.table}`}>
               <Filter
                 tickets={allTickets}
                 open={filterOpen}
                 update={OnTicketsFilter}
                 reset={resetTickets}
               />
-              <thead  >
+
+              <thead>
                 <tr>
                   <th>No.</th>
                   <th>Status</th>
@@ -207,7 +206,7 @@ const UserPanel = (props) => {
                   <th>Handling Duration</th>
                 </tr>
               </thead>
-              <tbody >
+              <tbody>
                 {!isLoading ? (
                   tickets.length === 0 ? (
                     <tr className={styles["ticket-even-pos"]}>

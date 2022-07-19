@@ -1,60 +1,55 @@
 import "./App.css";
-import { Fragment, useContext, useEffect } from "react";
+import { useContext} from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Login from "./components/Login";
 import UserPanel from "./components/UserPanel";
 import AuthContext from "./store/auth-context";
-import ProtectedRoute from "./routes/protectedRoute";
 import MainNavigation from "./shared/Navigation/MainNavigation";
 import AdminPanel from "./components/AdminPanel";
-import NotFound from "./pages/NotFound";
+
 
 function App() {
   const authCtx = useContext(AuthContext);
+  let routes;
+  if (!authCtx.isLoggedIn) {
+    routes = (
+      <Switch>
+        <Route exact path="/">
+          <Login />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else if (authCtx.isLoggedIn && authCtx.user.role === "regular") {
+    routes = (
+      <Switch>
+        <Route exact path="/">
+          <UserPanel />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else if (authCtx.isLoggedIn && authCtx.user.role === "admin") {
+    routes = (
+      <Switch>
+        <Route exact path="/">
+          <AdminPanel />
+        </Route>
+        <Route exact path="/UserPanel">
+          {" "}
+          {/*path="/AdminPanel/:userId" */}
+          <UserPanel />
+        </Route>
+
+        <Redirect to="/" />
+      </Switch>
+    );
+  }
   return (
     <BrowserRouter>
       <MainNavigation />
       <main>
-        <div className="App">
-          <Switch>
-            <Route exact path="/">
-              {!authCtx.isLoggedIn && <Login />}
-              {authCtx.isLoggedIn && authCtx.user.role === "regular" && (
-                <Redirect to="/UserPanel" />
-              )}
-              {authCtx.isLoggedIn && authCtx.user.role === "admin" && (
-                <Redirect to="/AdminPanel" />
-              )}
-            </Route>
-
-            <ProtectedRoute
-              exact
-              condition={
-                authCtx.isLoggedIn &&
-                (authCtx.user.role === "regular" ||
-                  authCtx.user.role === "admin")
-              }
-              path="/UserPanel"
-              component={UserPanel}
-            />
-            <ProtectedRoute
-              exact
-              condition={authCtx.isLoggedIn && authCtx.user.role === "admin"}
-              path="/AdminPanel"
-              component={AdminPanel}
-            />
-            <ProtectedRoute
-              condition={authCtx.isLoggedIn && authCtx.user.role === "admin"}
-              exact
-              path="/AdminPanel/:userId"
-              component={UserPanel}
-            />
-
-            <Route path="*">
-              <NotFound />
-            </Route>
-          </Switch>
-        </div>
+        <div className="App">{routes}</div>
       </main>
     </BrowserRouter>
   );

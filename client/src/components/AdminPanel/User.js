@@ -15,7 +15,7 @@ const User = (props) => {
   const handleOpen = () => {
     // setShow(true);
     history.push({
-      pathname: `/AdminPanel/${props.user._id}`,
+      pathname: `/UserPanel`,
       // to access state at the new path use props.location.state
       state: {
         user: props.user,
